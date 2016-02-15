@@ -1,0 +1,39 @@
+# This file contains metadata for your plugin. Since 
+# version 2.0 of QGIS this is the proper way to supply 
+# information about a plugin. The old method of 
+# embedding metadata in __init__.py will 
+# is no longer supported since version 2.0.
+
+# This file should be included when you package your plugin.# Mandatory items:
+
+[general]
+name=Metric Catchment Analyser
+qgisMinimumVersion=2.0
+description=Network based metric catchment analysis
+version=0.1
+author=Laurens Versluis
+email=l.versluis@spacesyntax.com
+
+about=This plugin takes a network and point-based origin layer and calculated the distance to each of the origins for each segment within a given radius. The tool outputs the catchment in a line layers and a concave hull polygon layer.
+
+tracker=https://github.com/laurensversluis/metric_catchment_analysis.git
+repository=https://github.com/laurensversluis/metric_catchment_analysis.git
+# End of mandatory metadata
+
+# Recommended items:
+
+# Uncomment the following line and add your changelog:
+# changelog=
+
+# Tags are comma separated with spaces allowed
+tags=network, catchment, concave hull
+
+homepage=https://github.com/laurensversluis/metric_catchment_analysis.git
+category=Plugins
+icon=icon.png
+# experimental flag
+experimental=True
+
+# deprecated flag (applies to the whole plugin, not just a single version)
+deprecated=False
+

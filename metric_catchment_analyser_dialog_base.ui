@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MetricCatchmentAnalyserDialogBase</class>
+ <widget class="QDialog" name="MetricCatchmentAnalyserDialogBase">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>509</width>
+    <height>425</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>509</width>
+    <height>425</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Metric Catchment Analyser</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout_2">
+   <item row="0" column="0">
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="11" column="1">
+      <widget class="QLabel" name="label_5">
+       <property name="text">
+        <string>Polygon tolerance</string>
+       </property>
+      </widget>
+     </item>
+     <item row="9" column="0">
+      <widget class="QDoubleSpinBox" name="network_tolerance"/>
+     </item>
+     <item row="8" column="0">
+      <widget class="QLineEdit" name="radius"/>
+     </item>
+     <item row="3" column="1">
+      <widget class="QPushButton" name="browse_input_network">
+       <property name="text">
+        <string>Browse</string>
+       </property>
+      </widget>
+     </item>
+     <item row="8" column="1">
+      <widget class="QLabel" name="label_4">
+       <property name="text">
+        <string>Radius</string>
+       </property>
+      </widget>
+     </item>
+     <item row="14" column="0">
+      <widget class="QLineEdit" name="path_network"/>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="network_layer">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Network layer</string>
+       </property>
+      </widget>
+     </item>
+     <item row="15" column="0">
+      <widget class="QCheckBox" name="check_polygon">
+       <property name="text">
+        <string>Catchment polygon</string>
+       </property>
+      </widget>
+     </item>
+     <item row="11" column="0">
+      <widget class="QLineEdit" name="polygon_tolerance"/>
+     </item>
+     <item row="9" column="1">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Network tolerance</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="0">
+      <widget class="QLabel" name="origin_layer">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Origin layer</string>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="0">
+      <widget class="QComboBox" name="choose_origin">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="1">
+      <widget class="QPushButton" name="browse_input_origin">
+       <property name="text">
+        <string>Browse</string>
+       </property>
+      </widget>
+     </item>
+     <item row="17" column="1">
+      <widget class="QPushButton" name="browse_output_polygon">
+       <property name="text">
+        <string>Browse</string>
+       </property>
+      </widget>
+     </item>
+     <item row="14" column="1">
+      <widget class="QPushButton" name="browse_output_network">
+       <property name="text">
+        <string>Browse</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QComboBox" name="choose_network">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
+     </item>
+     <item row="16" column="0" colspan="2">
+      <widget class="Line" name="line_3">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="13" column="0">
+      <widget class="QCheckBox" name="check_network">
+       <property name="text">
+        <string>Catchment network</string>
+       </property>
+      </widget>
+     </item>
+     <item row="17" column="0">
+      <widget class="QLineEdit" name="path_polygon"/>
+     </item>
+     <item row="7" column="0" colspan="2">
+      <widget class="Line" name="line">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="12" column="0" colspan="2">
+      <widget class="Line" name="line_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="18" column="0" rowspan="2">
+      <widget class="QProgressBar" name="progress_mca">
+       <property name="value">
+        <number>24</number>
+       </property>
+      </widget>
+     </item>
+     <item row="19" column="1">
+      <widget class="QPushButton" name="run_mca">
+       <property name="text">
+        <string>Run</string>
+       </property>
+      </widget>
+     </item>
+     <item row="18" column="1">
+      <widget class="QPushButton" name="close_mca">
+       <property name="text">
+        <string>Close</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>close_mca</sender>
+   <signal>pressed()</signal>
+   <receiver>MetricCatchmentAnalyserDialogBase</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>401</x>
+     <y>360</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>276</x>
+     <y>-111</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
