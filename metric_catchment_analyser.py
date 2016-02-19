@@ -21,7 +21,7 @@
  ***************************************************************************/
 """
 from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
-from PyQt4.QtGui import QAction, QIcon
+from PyQt4.QtGui import QAction, QIcon, QFileDialog
 from qgis.core import *
 from qgis.gui import *
 # Initialize Qt resources from file resources.py
@@ -30,7 +30,7 @@ import resources
 from metric_catchment_analyser_dialog import MetricCatchmentAnalyserDialog
 import os.path
 # Import the mca class
-# import mca
+import mca_tools
 
 class MetricCatchmentAnalyser:
     """QGIS Plugin Implementation."""
@@ -73,12 +73,13 @@ class MetricCatchmentAnalyser:
         self.toolbar.setObjectName(u'MetricCatchmentAnalyser')
         
         # Connect button action to functions
-		self.dlg.choose_network.clicked.connect(self.select_output_file)
-        self.dlg.pushButton.clicked.connect(self.select_output_file)
-        self.dlg.pushButton_2.clicked.connect(self.Loadfile)
-        self.dlg.pushButton_4.clicked.connect(self.backgroundsave)
-        self.dlg.pushButton_5.clicked.connect(self.foregroundsave)
-        self.dlg.pushButton_3.clicked.connect(self.seperatelayer)
+        self.dlg.browse_input_network.clicked.connect(self.select_input_network)
+		self.dlg.browse_input_network.clicked.connect(self.select_input_origins)
+        
+        #self.dlg.pushButton_2.clicked.connect(self.Loadfile)
+        #self.dlg.pushButton_4.clicked.connect(self.backgroundsave)
+        #self.dlg.pushButton_5.clicked.connect(self.foregroundsave)
+        #self.dlg.pushButton_3.clicked.connect(self.seperatelayer)
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -189,29 +190,25 @@ class MetricCatchmentAnalyser:
             self.iface.removeToolBarIcon(action)
         # remove the toolbar
         del self.toolbar
-	
-	def input(self,mca):
-		pass
-	
-	def analysis(self,mca):
+
+	def select_input_file(self):
+		filename = QFileDialog.getOpenFileName(self.dlg, "Select output file ","", '*.shp')
+		return filename
 		
-		# Build graph
-		graph, tied_points, origins = graph_builder(network_lines,origin_points,Network_tolerance)
-		# Run analysis
-		mca(graph, tied_points, output_network, output_catchment, Catchment_threshold)
-		# Render network
-		mca_network_renderer(output_network, Radius)
-		#Render catchments
-		mca_catchment_renderer(output_catchment)
-	
-	def output(self,mca):
-		pass
-	
-		r = Qgs
+	def select_output_file(self):
+		filename = QFileDialog.getOpenFileName(self.dlg, "Select output file ","", '*.shp')
+		return filename
 	
     def run(self):
         """Run method that performs all the real work"""
-        # show the dialog
+        layers = self.iface.legendInterface().layers()
+		layer_list = []
+		for layer in layers:
+			layer_list.append(layer.name())
+			
+		self.dlg.choose_network.addItems(layer_list)
+		self.dlg.choose_origins.addItems(layer_list)			
+		# show the dialog
         self.dlg.show()
         # Run the dialog event loop
         result = self.dlg.exec_()
@@ -219,4 +216,27 @@ class MetricCatchmentAnalyser:
         if result:
             # Do something useful here - delete the line containing pass and
             # substitute with your code.
-            pass
+            filename = self.dlg.lineEdit.text()
+			
+
+		
+	def setting(self):
+		otf = False
+		Network_tolerance = 1
+		Radius = 2000
+		Catchment_threshold = 100
+
+		
+		# Build graph
+		#graph, tied_points, origins = graph_builder(network_lines,origin_points,Network_tolerance)
+		# Run analysis
+		#mca(graph, tied_points, output_network, output_catchment, Catchment_threshold)
+		# Render network
+		#mca_network_renderer(output_network, Radius)
+		#Render catchments
+		#mca_catchment_renderer(output_catchment)
+        pass
+	
+	def output(self,mca):
+		pass
+				
