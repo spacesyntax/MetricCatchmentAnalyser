@@ -20,10 +20,11 @@
  *                                                                         *
  ***************************************************************************/
 """
-from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
-from PyQt4.QtGui import QAction, QIcon, QFileDialog
+from PyQt4.QtCore import *
+from PyQt4.QtGui import *
 from qgis.core import *
 from qgis.gui import *
+
 # Initialize Qt resources from file resources.py
 import resources
 # Import the code for the dialog
@@ -64,22 +65,31 @@ class MetricCatchmentAnalyser:
         # Create the dialog (after translation) and keep reference
         self.dlg = MetricCatchmentAnalyserDialog()
 
+        self.mca_tools = mca_tools
         # Declare instance attributes
         self.actions = []
         self.menu = self.tr(u'&Metric Catchment Analyser')
-        
+
         # TODO: We are going to let the user set this up in a future iteration
         self.toolbar = self.iface.addToolBar(u'MetricCatchmentAnalyser')
         self.toolbar.setObjectName(u'MetricCatchmentAnalyser')
-        
-        # Connect button action to functions
-        self.dlg.browse_input_network.clicked.connect(self.select_input_network)
-		self.dlg.browse_input_network.clicked.connect(self.select_input_origins)
-        
-        #self.dlg.pushButton_2.clicked.connect(self.Loadfile)
-        #self.dlg.pushButton_4.clicked.connect(self.backgroundsave)
-        #self.dlg.pushButton_5.clicked.connect(self.foregroundsave)
-        #self.dlg.pushButton_3.clicked.connect(self.seperatelayer)
+
+        # setup lineEdit boxes
+        self.dlg.path_input_network.clear()
+        self.dlg.path_input_origins.clear()
+        self.dlg.path_output_network.setText("Save as temporary layer...")
+        self.dlg.path_output_polygon.setText("Save as temporary layer...")
+        # connect input browse buttons
+        self.dlg.browse_input_network.clicked.connect(self.browse_input_network)
+        self.dlg.browse_input_origins.clicked.connect(self.browse_input_origins)
+        # connect drop-down menus
+        self.dlg.choose_network.activated.connect(self.choose_network)
+        self.dlg.choose_origins.activated.connect(self.choose_origins)
+        # connect output browse buttons
+        self.dlg.browse_output_network.clicked.connect(self.browse_output_network)
+        self.dlg.browse_output_polygon.clicked.connect(self.browse_output_polygon)
+
+        self.dlg.run_mca.clicked.connect(self.analysis)
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -180,7 +190,6 @@ class MetricCatchmentAnalyser:
             callback=self.run,
             parent=self.iface.mainWindow())
 
-
     def unload(self):
         """Removes the plugin menu item and icon from QGIS GUI."""
         for action in self.actions:
@@ -191,52 +200,165 @@ class MetricCatchmentAnalyser:
         # remove the toolbar
         del self.toolbar
 
-	def select_input_file(self):
-		filename = QFileDialog.getOpenFileName(self.dlg, "Select output file ","", '*.shp')
-		return filename
-		
-	def select_output_file(self):
-		filename = QFileDialog.getOpenFileName(self.dlg, "Select output file ","", '*.shp')
-		return filename
-	
-    def run(self):
-        """Run method that performs all the real work"""
-        layers = self.iface.legendInterface().layers()
-		layer_list = []
-		for layer in layers:
-			layer_list.append(layer.name())
-			
-		self.dlg.choose_network.addItems(layer_list)
-		self.dlg.choose_origins.addItems(layer_list)			
-		# show the dialog
-        self.dlg.show()
-        # Run the dialog event loop
-        result = self.dlg.exec_()
-        # See if OK was pressed
-        if result:
-            # Do something useful here - delete the line containing pass and
-            # substitute with your code.
-            filename = self.dlg.lineEdit.text()
-			
+	def input(self,mca):
+		pass
 
-		
-	def setting(self):
-		otf = False
-		Network_tolerance = 1
-		Radius = 2000
-		Catchment_threshold = 100
+	def analysis(self,mca):
 
-		
 		# Build graph
-		#graph, tied_points, origins = graph_builder(network_lines,origin_points,Network_tolerance)
+		graph, tied_points, origins = graph_builder(network_lines,origin_points,Network_tolerance)
 		# Run analysis
-		#mca(graph, tied_points, output_network, output_catchment, Catchment_threshold)
+		mca(graph, tied_points, output_network, output_catchment, Catchment_threshold)
 		# Render network
-		#mca_network_renderer(output_network, Radius)
+		mca_network_renderer(output_network, Radius)
 		#Render catchments
-		#mca_catchment_renderer(output_catchment)
-        pass
-	
+		mca_catchment_renderer(output_catchment)
+
 	def output(self,mca):
 		pass
-				
+
+		r = Qgs
+
+    def choose_network(self):
+        layers = self.iface.legendInterface().layers()
+        layer_name = self.dlg.choose_network.currentText()
+        layer_index = self.dlg.choose_network.currentIndex()
+        network = layers[layer_index]
+        if not network.isValid():
+            self.iface.messageBar().pushMessage(
+                "Metric Catchment Analyser: ",
+                "Invalid network file!",
+                level=QgsMessageBar.WARNING,
+                duration=5)
+        elif not network.wkbType() == QGis.WKBLineString:
+            self.iface.messageBar().pushMessage(
+                "Metric Catchment Analyser: ",
+                "This file does not contain lines!",
+                level=QgsMessageBar.WARNING,
+                duration=5)
+        else:
+            self.dlg.path_input_network.setText(layer_name)
+
+    def browse_input_network(self):
+        filename = QFileDialog.getOpenFileName(self.dlg, "Select input file ","", '*.shp')
+        network = QgsVectorLayer(filename, 'input', 'ogr')
+        if not network.isValid():
+            self.iface.messageBar().pushMessage(
+                "Metric Catchment Analyser: ",
+                "Invalid network file!",
+                level=QgsMessageBar.WARNING,
+                duration=5)
+        elif not network.wkbType() == QGis.WKBLineString:
+            self.iface.messageBar().pushMessage(
+                "Metric Catchment Analyser: ",
+                "This file does not contain lines!",
+                level=QgsMessageBar.WARNING,
+                duration=5)
+        else:
+            self.dlg.path_input_network.setText(filename)
+            return network
+
+    def choose_origins(self):
+        layers = self.iface.legendInterface().layers()
+        layer_name = self.dlg.choose_origins.currentText()
+        layer_index = self.dlg.choose_origins.currentIndex()
+        origins = layers[layer_index]
+        if not origins.isValid():
+            self.iface.messageBar().pushMessage(
+                "Metric Catchment Analyser: ",
+                "Invalid network file!",
+                level=QgsMessageBar.WARNING,
+                duration=5)
+        elif not origins.wkbType() == QGis.WKBPoint:
+            self.iface.messageBar().pushMessage(
+                "Metric Catchment Analyser: ",
+                "This file does not contain points!",
+                level=QgsMessageBar.WARNING,
+                duration=5)
+        else:
+            self.dlg.path_input_origins.setText(layer_name)
+
+    def browse_input_origins(self):
+        filename = QFileDialog.getOpenFileName(self.dlg, "Select input file ","", '*.shp')
+        origins = QgsVectorLayer(filename, 'input', 'ogr')
+        if not origins.isValid():
+            self.iface.messageBar().pushMessage(
+                "Metric Catchment Analyser: ",
+                "Invalid origin file!",
+                level=QgsMessageBar.WARNING,
+                duration=5)
+        elif not origins.wkbType() == QGis.WKBPoint:
+            self.iface.messageBar().pushMessage(
+                "Metric Catchment Analyser: ",
+                "This file does not contain points!",
+                level=QgsMessageBar.WARNING,
+                duration=5)
+        else:
+            self.dlg.path_input_origin.setText(filename)
+            return origins
+
+    def browse_output_network(self):
+        file_name = QFileDialog.getSaveFileName(self.dlg, "Save output file ","mca_network", '*.shp')
+        self.dlg.path_output_network.setText(file_name)
+
+    def browse_output_polygon(self):
+        file_name = QFileDialog.getSaveFileName(self.dlg, "Save output file ","mca_catchment", '*.shp')
+        self.dlg.path_output_polygon.setText(file_name)
+
+    def analysis(self,mca):
+
+        # loading the network
+        network_index = self.dlg.choose_network.currentIndex()
+        layers = self.iface.legendInterface().layers()
+        network = layers[network_index]
+
+        # loading the origins
+        origin_index = self.dlg.choose_origins.currentIndex()
+        layers = self.iface.legendInterface().layers()
+        origins = layers[origin_index]
+        crs = network.crs()
+
+        # loading settings
+        radius = self.dlg.radius.value()
+        network_tolerance = self.dlg.network_tolerance.value()
+        polygon_tolerance = self.dlg.polygon_tolerance.value()
+
+        # settting up the output network
+        output_network = QgsVectorLayer("linestring?crs="+ crs.toWkt(), "mca_network", "memory")
+
+        # setup of output polygon
+        output_catchment = QgsVectorLayer("polygon?crs="+ crs.toWkt(), "mca_catchment", "memory")
+        output_catchment.dataProvider().addAttributes([QgsField("origin", QVariant.String)])
+        output_catchment.updateFields()
+
+        # build graph
+        graph, tied_points, origins = self.mca_tools.graph_builder(network,origins,network_tolerance)
+        # run analysis
+        self.mca_tools.mca(
+            graph,
+            tied_points,
+            output_network,
+            output_catchment,
+            polygon_tolerance,
+            radius)
+        # render network
+        if self.dlg.check_network.isChecked() == True:
+            self.mca_tools.mca_network_renderer(output_network, radius)
+        # render catchments
+        if self.dlg.check_polygon.isChecked() == True:
+            self.mca_tools.mca_catchment_renderer(output_catchment)
+
+    def run(self):
+        # list of active layers for the comboxes
+        layers = self.iface.legendInterface().layers()
+        layer_list = []
+        for layer in layers:
+            layer_list.append(layer.name())
+
+        self.dlg.choose_network.addItems(layer_list)
+        self.dlg.choose_origins.addItems(layer_list)
+        # show the dialog
+        self.dlg.show()
+
+
+

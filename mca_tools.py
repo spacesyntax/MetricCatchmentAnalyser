@@ -3,38 +3,19 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
 from qgis.core import *
-from qgis.gui import *
 from qgis.networkanalysis import *
 
-from db_manager.db_plugins.plugin import DBPlugin, Schema, Table, BaseError
-from db_manager.db_plugins import createDbPlugin
-from db_manager.dlg_db_error import DlgDbError
-from processing.algs.qgis import postgis_utils
-
 from shapely.ops import cascaded_union, polygonize
-from shapely import geometry as sh_geom
 from scipy.spatial import Delaunay
-import numpy as np
 import math
-
-def network_converter(network_lines):
-	crs = network_lines.crs()
-	epsg = crs.authid()
-	output_network = QgsVectorLayer("linestring?crs="+ crs.toWkt(), "mca_network", "memory")
-	return crs, epsg, output_network
-
-def origin_converter(origin_points):
-	crs = origin_points.crs()
-	output_catchment = QgsVectorLayer("polygon?crs="+ crs.toWkt(), "mca_catchment", "memory")
-	output_catchment.dataProvider().addAttributes([QgsField("origin", QVariant.String)]) 
-	output_catchment.updateFields()
 
 def graph_builder(network_lines, origin_points, tolerance):
  
- 	# Reading crs and epsg
+ 	# Settings
  	crs = network_lines.crs()
  	epsg = crs.authid()
- 	
+	otf = False
+
  	# Reading crs and epsg
 	director = QgsLineVectorLayerDirector(network_lines, -1,'', '', '',3)
 	properter = QgsDistanceArcProperter()
@@ -132,7 +113,7 @@ def mca_catchment_writer(output_catchment, mca_catchments, alpha):
 		p.setGeometry(p_geom)
 		output_catchment.dataProvider().addFeatures([p]) 
 		
-def mca(graph, tied_origins,output_network, output_catchment, alpha):
+def mca(graph, tied_origins,output_network, output_catchment, alpha, radius):
 	
 	output_network.dataProvider().addAttributes([QgsField("id", QVariant.Int)])
 	output_network.updateFields()
@@ -188,9 +169,9 @@ def mca(graph, tied_origins,output_network, output_catchment, alpha):
 				mca_network[x]['arcCost'].append(arcCost) 
 			
             # lines within the radius
-			if cost[inVertexId] < Radius and tree[inVertexId] != -1: # lines within the radius
+			if cost[inVertexId] < radius and tree[inVertexId] != -1: # lines within the radius
 				outVertexId = graph.arc(x).outVertex()
-				if cost[outVertexId] < Radius:
+				if cost[outVertexId] < radius:
 					arc_cost = cost[outVertexId]
 					arcCost = {i : arc_cost}
 					mca_network[x]['arcCost'].append(arcCost) 
@@ -198,12 +179,12 @@ def mca(graph, tied_origins,output_network, output_catchment, alpha):
 					mca_catchment_points[i].append(graph.vertex(inVertexId).point())
 					
  			# lines at the edge of the radius
-			elif cost[inVertexId] > Radius and tree[inVertexId] != -1:
+			elif cost[inVertexId] > radius and tree[inVertexId] != -1:
 				outVertexId = graph.arc(x).outVertex()
 				
-				if cost[outVertexId] < Radius:
+				if cost[outVertexId] < radius:
 					# constructing cut down edge lines
-					edge_line_length = Radius - cost[outVertexId]
+					edge_line_length = radius - cost[outVertexId]
 					edge_line_azimuth = graph.vertex(outVertexId).point().azimuth(graph.vertex(inVertexId).point())# degrees from north
 
 					new_point_adjacent = math.sin(math.radians(edge_line_azimuth)) * edge_line_length
