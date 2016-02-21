@@ -88,8 +88,12 @@ class MetricCatchmentAnalyser:
         # connect output browse buttons
         self.dlg.browse_output_network.clicked.connect(self.browse_output_network)
         self.dlg.browse_output_polygon.clicked.connect(self.browse_output_polygon)
-
+        # connect the run button
         self.dlg.run_mca.clicked.connect(self.analysis)
+        # setup the progress bar
+        self.dlg.progress_mca.setMinimum(1)
+        self.dlg.progress_mca.setMaximum(4)
+
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -200,25 +204,6 @@ class MetricCatchmentAnalyser:
         # remove the toolbar
         del self.toolbar
 
-	def input(self,mca):
-		pass
-
-	def analysis(self,mca):
-
-		# Build graph
-		graph, tied_points, origins = graph_builder(network_lines,origin_points,Network_tolerance)
-		# Run analysis
-		mca(graph, tied_points, output_network, output_catchment, Catchment_threshold)
-		# Render network
-		mca_network_renderer(output_network, Radius)
-		#Render catchments
-		mca_catchment_renderer(output_catchment)
-
-	def output(self,mca):
-		pass
-
-		r = Qgs
-
     def choose_network(self):
         layers = self.iface.legendInterface().layers()
         layer_name = self.dlg.choose_network.currentText()
@@ -294,7 +279,7 @@ class MetricCatchmentAnalyser:
                 level=QgsMessageBar.WARNING,
                 duration=5)
         else:
-            self.dlg.path_input_origin.setText(filename)
+            self.dlg.path_input_origins.setText(filename)
             return origins
 
     def browse_output_network(self):
@@ -306,7 +291,7 @@ class MetricCatchmentAnalyser:
         self.dlg.path_output_polygon.setText(file_name)
 
     def analysis(self,mca):
-
+        self.dlg.progress_mca.reset()
         # loading the network
         network_index = self.dlg.choose_network.currentIndex()
         layers = self.iface.legendInterface().layers()
@@ -322,14 +307,16 @@ class MetricCatchmentAnalyser:
         radius = self.dlg.radius.value()
         network_tolerance = self.dlg.network_tolerance.value()
         polygon_tolerance = self.dlg.polygon_tolerance.value()
+        self.dlg.progress_mca.setValue(1)
 
-        # settting up the output network
+        # setting up the output network
         output_network = QgsVectorLayer("linestring?crs="+ crs.toWkt(), "mca_network", "memory")
 
         # setup of output polygon
         output_catchment = QgsVectorLayer("polygon?crs="+ crs.toWkt(), "mca_catchment", "memory")
         output_catchment.dataProvider().addAttributes([QgsField("origin", QVariant.String)])
         output_catchment.updateFields()
+        self.dlg.progress_mca.setValue(2)
 
         # build graph
         graph, tied_points, origins = self.mca_tools.graph_builder(network,origins,network_tolerance)
@@ -341,12 +328,14 @@ class MetricCatchmentAnalyser:
             output_catchment,
             polygon_tolerance,
             radius)
+        self.dlg.progress_mca.setValue(3)
         # render network
         if self.dlg.check_network.isChecked() == True:
             self.mca_tools.mca_network_renderer(output_network, radius)
         # render catchments
         if self.dlg.check_polygon.isChecked() == True:
             self.mca_tools.mca_catchment_renderer(output_catchment)
+        self.dlg.progress_mca.setValue(4)
 
     def run(self):
         # list of active layers for the comboxes
