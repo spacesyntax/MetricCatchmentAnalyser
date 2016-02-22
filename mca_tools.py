@@ -9,252 +9,250 @@ from shapely.ops import cascaded_union, polygonize
 from scipy.spatial import Delaunay
 import math
 
+
 def graph_builder(network_lines, origin_points, tolerance):
- 
- 	# Settings
- 	crs = network_lines.crs()
- 	epsg = crs.authid()
-	otf = False
+    # Settings
+    crs = network_lines.crs()
+    epsg = crs.authid()
+    otf = False
 
- 	# Reading crs and epsg
-	director = QgsLineVectorLayerDirector(network_lines, -1,'', '', '',3)
-	properter = QgsDistanceArcProperter()
-	director.addProperter(properter)
-	builder = QgsGraphBuilder(crs,otf,tolerance,epsg)
+    # Reading crs and epsg
+    director = QgsLineVectorLayerDirector(network_lines, -1, '', '', '', 3)
+    properter = QgsDistanceArcProperter()
+    director.addProperter(properter)
+    builder = QgsGraphBuilder(crs, otf, tolerance, epsg)
 
-	# Reading origins
-	origins = []
-	for f in origin_points.getFeatures():
-		geom = f.geometry().asPoint()
-		origins.append(geom)
-  
-	# Connect origin points to the director and build graph
-	tied_origins = director.makeGraph(builder, origins)
-	graph = builder.graph()
-	
-	return graph, tied_origins, origins
-	
-def alpha_shape(points,alpha): 
-	
-	# empty triangle list
-	pl_lines = []
-	
-	# create delaunay triangulation
-	pl_p_tri = Delaunay(points)
+    # Reading origins
+    origins = []
+    for f in origin_points.getFeatures():
+        geom = f.geometry().asPoint()
+        origins.append(geom)
 
-	# assess triangles
-	for a, b, c in pl_p_tri.vertices:
-		coord_a = points[a]
-		coord_b = points[b]
-		coord_c = points[c]
-	
-		# calculating length of triangle sides
-		a = math.sqrt((coord_a[0] -coord_b[0]) **2 + (coord_a[1] -coord_b[1]) **2 ) 
-		b = math.sqrt((coord_a[0] -coord_c[0]) **2 + (coord_a[1] -coord_c[1]) **2 ) 
-		c = math.sqrt((coord_c[0] -coord_b[0]) **2 + (coord_c[1] -coord_b[1]) **2 ) 
-	
-		# calculating circumcircle radius
-		circum_rad = (a * b * c) / math.sqrt((a+b+c) * (b+c-a) * (c+a-b) * (a+b-c))
-	
-		# circumcircle radius filter
-		if circum_rad < alpha:
-			pl_lines.append((coord_a, coord_b))
-			pl_lines.append((coord_a, coord_c))
-			pl_lines.append((coord_c, coord_b))
-	
-	# circumcircle radius filter
-	pl_triangles = list(polygonize(pl_lines))
-	pl_polygon = cascaded_union(pl_triangles)
-	
-	return pl_polygon
+    # Connect origin points to the director and build graph
+    tied_origins = director.makeGraph(builder, origins)
+    graph = builder.graph()
 
-def mca_network_writer(output_network,mca_network):
+    return graph, tied_origins, origins
 
-	output_network.dataProvider().addAttributes([QgsField("minimum_distance", QVariant.Int)])
-	output_network.updateFields()
-	
-	arc_geom_length = []
-	i = 0
-	for arc in mca_network:
-		arc_geom = QgsGeometry.fromPolyline(arc['arcGeom'])	
-		if arc_geom.length() in arc_geom_length: # removes duplicates 
-			pass
-		elif not arc['arcCost']: #removes unconnected lines or lines out of reach
-			pass
-		else:
-			f = QgsFeature(output_network.pendingFields())
-			f.setAttribute("id", i)
-			geom = QgsGeometry.fromPolyline(arc['arcGeom'])
-			f.setGeometry(geom)
-			
-			cost_list = []
-			for cost_dict in arc['arcCost']:
-				for origin in cost_dict:
-					cost_list.append(cost_dict[origin])
-					f.setAttribute(origin+1, int(cost_dict[origin]))
 
-				if len(cost_list) > 0:
-					f.setAttribute('minimum_distance', int(min(cost_list)))
-				
-			output_network.dataProvider().addFeatures([f])
-			arc_geom_length.append(arc_geom.length())
-		i += 1
-	
+def alpha_shape(points, alpha):
+    # empty triangle list
+    pl_lines = []
+
+    # create delaunay triangulation
+    pl_p_tri = Delaunay(points)
+
+    # assess triangles
+    for a, b, c in pl_p_tri.vertices:
+        coord_a = points[a]
+        coord_b = points[b]
+        coord_c = points[c]
+
+        # calculating length of triangle sides
+        a = math.sqrt((coord_a[0] - coord_b[0]) ** 2 + (coord_a[1] - coord_b[1]) ** 2)
+        b = math.sqrt((coord_a[0] - coord_c[0]) ** 2 + (coord_a[1] - coord_c[1]) ** 2)
+        c = math.sqrt((coord_c[0] - coord_b[0]) ** 2 + (coord_c[1] - coord_b[1]) ** 2)
+
+        # calculating circumcircle radius
+        circum_rad = (a * b * c) / math.sqrt((a + b + c) * (b + c - a) * (c + a - b) * (a + b - c))
+
+        # circumcircle radius filter
+        if circum_rad < alpha:
+            pl_lines.append((coord_a, coord_b))
+            pl_lines.append((coord_a, coord_c))
+            pl_lines.append((coord_c, coord_b))
+
+    # circumcircle radius filter
+    pl_triangles = list(polygonize(pl_lines))
+    pl_polygon = cascaded_union(pl_triangles)
+
+    return pl_polygon
+
+
+def mca_network_writer(output_network, mca_network):
+    output_network.dataProvider().addAttributes([QgsField("minimum_distance", QVariant.Int)])
+    output_network.updateFields()
+
+    arc_geom_length = []
+    i = 0
+    for arc in mca_network:
+        arc_geom = QgsGeometry.fromPolyline(arc['arcGeom'])
+        if arc_geom.length() in arc_geom_length:  # removes duplicates
+            pass
+        elif not arc['arcCost']:  # removes unconnected lines or lines out of reach
+            pass
+        else:
+            f = QgsFeature(output_network.pendingFields())
+            f.setAttribute("id", i)
+            geom = QgsGeometry.fromPolyline(arc['arcGeom'])
+            f.setGeometry(geom)
+
+            cost_list = []
+            for cost_dict in arc['arcCost']:
+                for origin in cost_dict:
+                    cost_list.append(cost_dict[origin])
+                    f.setAttribute(origin + 1, int(cost_dict[origin]))
+
+                if len(cost_list) > 0:
+                    f.setAttribute('minimum_distance', int(min(cost_list)))
+
+            output_network.dataProvider().addFeatures([f])
+            arc_geom_length.append(arc_geom.length())
+        i += 1
+
+
 def mca_catchment_writer(output_catchment, mca_catchments, alpha):
-	
-	for i in list(mca_catchments):
-		
-		origin = i.keys()[0]
-		points = i[origin]
-		
-		p = QgsFeature(output_catchment.pendingFields())
-		p.setAttribute("origin", "origin_%s" % (origin+1))
-		p_geom = QgsGeometry.fromWkt((alpha_shape(points, alpha)).wkt)
-		p.setGeometry(p_geom)
-		output_catchment.dataProvider().addFeatures([p]) 
-		
-def mca(graph, tied_origins,output_network, output_catchment, alpha, radius):
-	
-	output_network.dataProvider().addAttributes([QgsField("id", QVariant.Int)])
-	output_network.updateFields()
-	
-	# dictionary with id's, list of lines and their respective costs
-	mca_network = []
-	
-	# list with dictionaries of polygon points
-	mca_catchments = []
-	
-	n = 0
-	
-	while n < graph.arcCount():
-		arc_prop = {'arcId': 0, 'arcGeom': [], 'arcCost': [],}
-		
-		arc_prop['arcId'] = n;
-		
-		inVertexId = graph.arc(n).inVertex()
-		outVertexId = graph.arc(n).outVertex()
-		
-		inVertexGeom = graph.vertex(inVertexId).point()
-		outVertexGeom = graph.vertex(outVertexId).point()
-		
-		arc_prop['arcGeom'] = [inVertexGeom, outVertexGeom];
-		mca_network.append(arc_prop)
-		
-		n += 1
+    for i in list(mca_catchments):
+        origin = i.keys()[0]
+        points = i[origin]
 
-	# iteration through all tied origin points
-	i = 0
+        p = QgsFeature(output_catchment.pendingFields())
+        p.setAttribute("origin", "origin_%s" % (origin + 1))
+        p_geom = QgsGeometry.fromWkt((alpha_shape(points, alpha)).wkt)
+        p.setGeometry(p_geom)
+        output_catchment.dataProvider().addFeatures([p])
 
-	for o in tied_origins:
-		
-		mca_catchment_points = {i : []}
-		
-		origin_vertex_id = graph.findVertex(tied_origins[i])
 
-		output_network.dataProvider().addAttributes([QgsField("origin_%s" % (i+1), QVariant.Int)]) 
-		output_network.updateFields()
-		
-		(tree, cost) = QgsGraphAnalyzer.dijkstra(graph, origin_vertex_id, 0)
-		
+def mca(graph, tied_origins, output_network, output_catchment, alpha, radius):
+    output_network.dataProvider().addAttributes([QgsField("id", QVariant.Int)])
+    output_network.updateFields()
 
-		# Analysing the costs of the tree
-		x = 0
-		
-		while x < graph.arcCount():
-			inVertexId = graph.arc(x).inVertex()
-			
-			# origin lines
-			if inVertexId == origin_vertex_id:
-				arcCost = {i : 0}
-				mca_network[x]['arcCost'].append(arcCost) 
-			
-            # lines within the radius
-			if cost[inVertexId] < radius and tree[inVertexId] != -1: # lines within the radius
-				outVertexId = graph.arc(x).outVertex()
-				if cost[outVertexId] < radius:
-					arc_cost = cost[outVertexId]
-					arcCost = {i : arc_cost}
-					mca_network[x]['arcCost'].append(arcCost) 
-					
-					mca_catchment_points[i].append(graph.vertex(inVertexId).point())
-					
- 			# lines at the edge of the radius
-			elif cost[inVertexId] > radius and tree[inVertexId] != -1:
-				outVertexId = graph.arc(x).outVertex()
-				
-				if cost[outVertexId] < radius:
-					# constructing cut down edge lines
-					edge_line_length = radius - cost[outVertexId]
-					edge_line_azimuth = graph.vertex(outVertexId).point().azimuth(graph.vertex(inVertexId).point())# degrees from north
+    # dictionary with id's, list of lines and their respective costs
+    mca_network = []
 
-					new_point_adjacent = math.sin(math.radians(edge_line_azimuth)) * edge_line_length
-					new_point_opposite = math.cos(math.radians(edge_line_azimuth)) * edge_line_length
+    # list with dictionaries of polygon points
+    mca_catchments = []
 
-					new_point_x = graph.vertex(outVertexId).point()[0] + new_point_adjacent
-					new_point_y = graph.vertex(outVertexId).point()[1] + new_point_opposite
-					
-					# add edge lines
-					l = QgsFeature(output_network.pendingFields())
-					l.setAttribute(i+1, int(cost[outVertexId]))
-					l.setGeometry(QgsGeometry.fromPolyline([graph.vertex(outVertexId).point(),QgsPoint(new_point_x,new_point_y)]))
-					output_network.dataProvider().addFeatures([l])
-					
-					# add edge points
-					mca_catchment_points[i].append((new_point_x,new_point_y))
-					
-			x += 1
-		
-		mca_catchments.append(mca_catchment_points)
-				
-		i += 1
-	
-	# running writers
-	mca_network_writer(output_network, mca_network)
-	
-	mca_catchment_writer(output_catchment, mca_catchments,alpha)
-	
+    n = 0
+
+    while n < graph.arcCount():
+        arc_prop = {'arcId': 0, 'arcGeom': [], 'arcCost': [],}
+
+        arc_prop['arcId'] = n;
+
+        inVertexId = graph.arc(n).inVertex()
+        outVertexId = graph.arc(n).outVertex()
+
+        inVertexGeom = graph.vertex(inVertexId).point()
+        outVertexGeom = graph.vertex(outVertexId).point()
+
+        arc_prop['arcGeom'] = [inVertexGeom, outVertexGeom];
+        mca_network.append(arc_prop)
+
+        n += 1
+
+    # iteration through all tied origin points
+    i = 0
+
+    for o in tied_origins:
+
+        mca_catchment_points = {i: []}
+
+        origin_vertex_id = graph.findVertex(tied_origins[i])
+
+        output_network.dataProvider().addAttributes([QgsField("origin_%s" % (i + 1), QVariant.Int)])
+        output_network.updateFields()
+
+        (tree, cost) = QgsGraphAnalyzer.dijkstra(graph, origin_vertex_id, 0)
+
+        # Analysing the costs of the tree
+        x = 0
+
+        while x < graph.arcCount():
+            inVertexId = graph.arc(x).inVertex()
+
+            # origin lines
+            if inVertexId == origin_vertex_id:
+                arcCost = {i: 0}
+                mca_network[x]['arcCost'].append(arcCost)
+
+                # lines within the radius
+            if cost[inVertexId] < radius and tree[inVertexId] != -1:  # lines within the radius
+                outVertexId = graph.arc(x).outVertex()
+                if cost[outVertexId] < radius:
+                    arc_cost = cost[outVertexId]
+                    arcCost = {i: arc_cost}
+                    mca_network[x]['arcCost'].append(arcCost)
+
+                    mca_catchment_points[i].append(graph.vertex(inVertexId).point())
+
+            # lines at the edge of the radius
+            elif cost[inVertexId] > radius and tree[inVertexId] != -1:
+                outVertexId = graph.arc(x).outVertex()
+
+                if cost[outVertexId] < radius:
+                    # constructing cut down edge lines
+                    edge_line_length = radius - cost[outVertexId]
+                    edge_line_azimuth = graph.vertex(outVertexId).point().azimuth(
+                        graph.vertex(inVertexId).point())  # degrees from north
+
+                    new_point_adjacent = math.sin(math.radians(edge_line_azimuth)) * edge_line_length
+                    new_point_opposite = math.cos(math.radians(edge_line_azimuth)) * edge_line_length
+
+                    new_point_x = graph.vertex(outVertexId).point()[0] + new_point_adjacent
+                    new_point_y = graph.vertex(outVertexId).point()[1] + new_point_opposite
+
+                    # add edge lines
+                    l = QgsFeature(output_network.pendingFields())
+                    l.setAttribute(i + 1, int(cost[outVertexId]))
+                    l.setGeometry(QgsGeometry.fromPolyline(
+                        [graph.vertex(outVertexId).point(), QgsPoint(new_point_x, new_point_y)]))
+                    output_network.dataProvider().addFeatures([l])
+
+                    # add edge points
+                    mca_catchment_points[i].append((new_point_x, new_point_y))
+
+            x += 1
+
+        mca_catchments.append(mca_catchment_points)
+
+        i += 1
+
+    # running writers
+    mca_network_writer(output_network, mca_network)
+
+    mca_catchment_writer(output_catchment, mca_catchments, alpha)
+
+
 def mca_network_renderer(output_network, radius):
-	# settings for 10 color ranges depending on the radius
-	color_ranges = (
-		(0,(0.1*radius), '#ff0000'),
-		((0.1*radius),(0.2*radius), '#ff5100'),
-		((0.2*radius),(0.3*radius), '#ff9900'),
-		((0.3*radius),(0.4*radius), '#ffc800'),
-		((0.4*radius),(0.5*radius), '#ffee00'),
-		((0.5*radius),(0.6*radius), '#a2ff00'),
-		((0.6*radius),(0.7*radius), '#00ff91'),
-		((0.7*radius),(0.8*radius), '#00f3ff'),
-		((0.8*radius),(0.9*radius), '#0099ff'),
-		((0.9*radius),(1*radius), '#0033ff'))
-	
-	# list with all color ranges	
-	ranges = []
-	# for each range create a symbol with its respective color
-	for lower, upper, color in color_ranges:
-		symbol = QgsSymbolV2.defaultSymbol(output_network.geometryType())
-		symbol.setColor(QColor(color))
-		symbol.setWidth(0.5)
-		range = QgsRendererRangeV2(lower,upper,symbol,'')
-		ranges.append(range)
-	
-	# create renderer based on ranges and apply to network	
-	renderer = QgsGraduatedSymbolRendererV2('minimum_distance', ranges)
-	output_network.setRendererV2(renderer)
-	# add network to the canvas
-	QgsMapLayerRegistry.instance().addMapLayer(output_network)
-		
-def mca_catchment_renderer(output_catchment):
-	
-	# create a black dotted outline symbol layer
-	symbol_layer = QgsMarkerLineSymbolLayerV2()
-	symbol_layer.setColor(QColor('black'))
-	symbol_layer.setWidth(1)
-	# create renderer and change the symbol layer in its symbol 
-	renderer = output_catchment.rendererV2()
-	renderer.symbols()[0].changeSymbolLayer(0, symbol_layer)
-	output_catchment.setRendererV2(renderer)
-	# add catchment to the canvas
-	QgsMapLayerRegistry.instance().addMapLayer(output_catchment)
+    # settings for 10 color ranges depending on the radius
+    color_ranges = (
+        (0, (0.1 * radius), '#ff0000'),
+        ((0.1 * radius), (0.2 * radius), '#ff5100'),
+        ((0.2 * radius), (0.3 * radius), '#ff9900'),
+        ((0.3 * radius), (0.4 * radius), '#ffc800'),
+        ((0.4 * radius), (0.5 * radius), '#ffee00'),
+        ((0.5 * radius), (0.6 * radius), '#a2ff00'),
+        ((0.6 * radius), (0.7 * radius), '#00ff91'),
+        ((0.7 * radius), (0.8 * radius), '#00f3ff'),
+        ((0.8 * radius), (0.9 * radius), '#0099ff'),
+        ((0.9 * radius), (1 * radius), '#0033ff'))
 
-	
-	
+    # list with all color ranges
+    ranges = []
+    # for each range create a symbol with its respective color
+    for lower, upper, color in color_ranges:
+        symbol = QgsSymbolV2.defaultSymbol(output_network.geometryType())
+        symbol.setColor(QColor(color))
+        symbol.setWidth(0.5)
+        range = QgsRendererRangeV2(lower, upper, symbol, '')
+        ranges.append(range)
+
+    # create renderer based on ranges and apply to network
+    renderer = QgsGraduatedSymbolRendererV2('minimum_distance', ranges)
+    output_network.setRendererV2(renderer)
+    # add network to the canvas
+    QgsMapLayerRegistry.instance().addMapLayer(output_network)
+
+
+def mca_catchment_renderer(output_catchment):
+    # create a black dotted outline symbol layer
+    symbol_layer = QgsMarkerLineSymbolLayerV2()
+    symbol_layer.setColor(QColor('black'))
+    symbol_layer.setWidth(1)
+    # create renderer and change the symbol layer in its symbol
+    renderer = output_catchment.rendererV2()
+    renderer.symbols()[0].changeSymbolLayer(0, symbol_layer)
+    output_catchment.setRendererV2(renderer)
+    # add catchment to the canvas
+    QgsMapLayerRegistry.instance().addMapLayer(output_catchment)

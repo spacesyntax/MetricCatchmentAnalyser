@@ -292,21 +292,43 @@ class MetricCatchmentAnalyser:
 
     def analysis(self,mca):
         self.dlg.progress_mca.reset()
+
         # loading the network
         network_index = self.dlg.choose_network.currentIndex()
-        layers = self.iface.legendInterface().layers()
-        network = layers[network_index]
+        network_layers = self.iface.legendInterface().layers()
+
+        if not self.dlg.path_input_network.text():
+            self.iface.messageBar().pushMessage(
+                "Metric Catchment Analyser: ",
+                "No network selected!",
+                level=QgsMessageBar.WARNING,
+                duration=5)
+        elif self.dlg.choose_network.currentText():
+            network = network_layers[network_index]
+        else:
+            file_path = self.dlg.path_input_network.text()
+            network = QgsVectorLayer("%s" % (file_path) , "", "ogr")
 
         # loading the origins
-        origin_index = self.dlg.choose_origins.currentIndex()
-        layers = self.iface.legendInterface().layers()
-        origins = layers[origin_index]
-        crs = network.crs()
+        origins_index = self.dlg.choose_origins.currentIndex()
+        origin_layers = self.iface.legendInterface().layers()
+        if not self.dlg.path_input_origins.text():
+            self.iface.messageBar().pushMessage(
+                "Metric Catchment Analyser: ",
+                "No origins selected!",
+                level=QgsMessageBar.WARNING,
+                duration=5)
+        elif self.dlg.choose_origins.currentText():
+            origins = origin_layers[origins_index]
+        else:
+            file_path = self.dlg.path_input_network.text()
+            origins = QgsVectorLayer("%s" % (file_path) , "", "ogr")
 
         # loading settings
         radius = self.dlg.radius.value()
         network_tolerance = self.dlg.network_tolerance.value()
         polygon_tolerance = self.dlg.polygon_tolerance.value()
+        crs = network.crs()
         self.dlg.progress_mca.setValue(1)
 
         # setting up the output network
@@ -344,8 +366,9 @@ class MetricCatchmentAnalyser:
         for layer in layers:
             layer_list.append(layer.name())
 
-        self.dlg.choose_network.addItems(layer_list)
-        self.dlg.choose_origins.addItems(layer_list)
+        if not len(layer_list) == 0:
+            self.dlg.choose_network.addItems(layer_list)
+            self.dlg.choose_origins.addItems(layer_list)
         # show the dialog
         self.dlg.show()
 
