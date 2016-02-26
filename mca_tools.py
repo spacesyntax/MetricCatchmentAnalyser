@@ -70,7 +70,7 @@ def alpha_shape(points, alpha):
 
 
 def mca_network_writer(output_network, mca_network):
-    output_network.dataProvider().addAttributes([QgsField("minimum_distance", QVariant.Int)])
+    output_network.dataProvider().addAttributes([QgsField("min_dist", QVariant.Int)])
     output_network.updateFields()
 
     arc_geom_length = []
@@ -94,7 +94,7 @@ def mca_network_writer(output_network, mca_network):
                     f.setAttribute(origin + 1, int(cost_dict[origin]))
 
                 if len(cost_list) > 0:
-                    f.setAttribute('minimum_distance', int(min(cost_list)))
+                    f.setAttribute('min_dist', int(min(cost_list)))
 
             output_network.dataProvider().addFeatures([f])
             arc_geom_length.append(arc_geom.length())
@@ -112,7 +112,14 @@ def mca_catchment_writer(output_catchment, mca_catchments, alpha):
         p.setGeometry(p_geom)
         output_catchment.dataProvider().addFeatures([p])
 
-
+def mca_vector_writer(layer, path, crs):
+	shp_writer = QgsVectorFileWriter.writeAsVectorFormat(
+		layer,
+		r"%s" % path,
+		"utf-8",
+		crs,
+		"ESRI Shapefile")
+		
 def mca(graph, tied_origins, output_network, output_catchment, alpha, radius):
     output_network.dataProvider().addAttributes([QgsField("id", QVariant.Int)])
     output_network.updateFields()
@@ -239,7 +246,7 @@ def mca_network_renderer(output_network, radius):
         ranges.append(range)
 
     # create renderer based on ranges and apply to network
-    renderer = QgsGraduatedSymbolRendererV2('minimum_distance', ranges)
+    renderer = QgsGraduatedSymbolRendererV2('min_dist', ranges)
     output_network.setRendererV2(renderer)
     # add network to the canvas
     QgsMapLayerRegistry.instance().addMapLayer(output_network)
