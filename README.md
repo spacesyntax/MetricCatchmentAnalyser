@@ -1,7 +1,7 @@
 Metric Catchment Analyser
 ======================
 
-# Description
+## Description
 
 This plugin takes a line-based network and point-based origin layer and calculated the distance from each segment within a given radius to each of the origins. The tool outputs the catchment as lines and as a concave hull polygon layer.
 
