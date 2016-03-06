@@ -14,10 +14,10 @@ version=0.1
 author=Laurens Versluis
 email=l.versluis@spacesyntax.com
 
-about=This plugin takes a network and point-based origin layer and calculated the distance to each of the origins for each segment within a given radius. The tool outputs the catchment in a line layers and a concave hull polygon layer.
+about=This plugin takes a line-based network and point-based origin layer and calculated the distance from each segment within a given radius to each of the origins. The tool outputs the catchment as lines and as a concave hull polygon layer.
 
-tracker=https://github.com/laurensversluis/metric_catchment_analysis.git
-repository=https://github.com/laurensversluis/metric_catchment_analysis.git
+tracker=https://github.com/laurensversluis/MetricCatchmentAnalyser.git
+repository=https://github.com/laurensversluis/MetricCatchmentAnalyser.git
 # End of mandatory metadata
 
 # Recommended items:
@@ -28,7 +28,7 @@ repository=https://github.com/laurensversluis/metric_catchment_analysis.git
 # Tags are comma separated with spaces allowed
 tags=network, catchment, concave hull
 
-homepage=https://github.com/laurensversluis/metric_catchment_analysis.git
+homepage=https://github.com/laurensversluis/MetricCatchmentAnalyser.git
 category=Plugins
 icon=icon.png
 # experimental flag
