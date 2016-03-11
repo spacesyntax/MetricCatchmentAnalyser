@@ -297,76 +297,84 @@ class MetricCatchmentAnalyser:
 		active_layer_names = []
 		for layer in active_layers:
 			active_layer_names.append(layer.name())
-		# loading the network	
-		if not self.dlg.path_input_network.text():
+		# file check
+		if not network_path and not origins_path:
 			self.iface.messageBar().pushMessage(
 				"Metric Catchment Analyser: ",
-				"No network selected!",
+				"No network or origins selected!",
 				level=QgsMessageBar.WARNING,
 				duration=5)
-		elif network_name in active_layer_names:
-			network = active_layers[active_layer_names.index(network_name)]
+		elif not network_path:
+				self.iface.messageBar().pushMessage(
+					"Metric Catchment Analyser: ",
+					"No network selected!",
+					level=QgsMessageBar.WARNING,
+					duration=5)	
+		elif not origins_path:
+				self.iface.messageBar().pushMessage(
+					"Metric Catchment Analyser: ",
+					"No origins selected!",
+					level=QgsMessageBar.WARNING,
+					duration=5)					
 		else:
-			network = QgsVectorLayer("%s" % (network_path) , "", "ogr")
-		# loading the origins
-		if not self.dlg.path_input_origins.text():
-			self.iface.messageBar().pushMessage(
-				"Metric Catchment Analyser: ",
-				"No origins selected!",
-				level=QgsMessageBar.WARNING,
-				duration=5)
-		elif origins_name in active_layer_names:
-			origins = active_layers[active_layer_names.index(origins_name)]
-		else:
-			origins = QgsVectorLayer("%s" % (origins_path) , "", "ogr")
-		# loading settings
-		radius = self.dlg.radius.value()
-		network_tolerance = self.dlg.network_tolerance.value()
-		polygon_tolerance = self.dlg.polygon_tolerance.value()
-		crs = network.crs()
-		self.dlg.progress_mca.setValue(1)
-		# setting up the output network
-		output_network = QgsVectorLayer("linestring?crs="+ crs.toWkt(), "mca_network", "memory")
-
-		# setup of output polygon
-		output_catchment = QgsVectorLayer("polygon?crs="+ crs.toWkt(), "mca_catchment", "memory")
-		output_catchment.dataProvider().addAttributes([QgsField("origin", QVariant.String)])
-		output_catchment.updateFields()
-		self.dlg.progress_mca.setValue(2)
-
-		# build graph
-		graph, tied_points, origins = self.mca_tools.graph_builder(network,origins,network_tolerance)
-		self.dlg.progress_mca.setValue(3)
-		# run analysis
-		self.mca_tools.mca(
-			graph,
-			tied_points,
-			output_network,
-			output_catchment,
-			polygon_tolerance,
-			radius)
-		self.dlg.progress_mca.setValue(4)
-		# render network
-		if self.dlg.check_network.isChecked() == True:
-			# saving and rendering network in shapefile format
-			if self.dlg.path_output_network.text():
-				self.mca_tools.mca_vector_writer(output_network, output_network_path,crs)
-				output_network = QgsVectorLayer(output_network_path, 'mca_network', 'ogr')
-				self.mca_tools.mca_network_renderer(output_network,radius)
-			# rendering the temporary network
+			# loading network
+			if network_name in active_layer_names:
+				network = active_layers[active_layer_names.index(network_name)]
+			else: 	
+				network = QgsVectorLayer("%s" % (network_path) , "", "ogr")
+			# loading origins
+			if origins_name in active_layer_names:
+				origins = active_layers[active_layer_names.index(origins_name)]
 			else:
-				self.mca_tools.mca_network_renderer(output_network, radius)
-		# render catchments
-		if self.dlg.check_polygon.isChecked() == True:
-			# saving and rendering the catchment in shapefile format
-			if self.dlg.path_output_polygon.text():
-				self.mca_tools.mca_vector_writer(output_catchment, output_polygon_path,crs)
-				output_polygon = QgsVectorLayer(output_polygon_path, 'mca_catchment', 'ogr')
-				self.mca_tools.mca_catchment_renderer(output_polygon)
-			# rendering the temporary catchment
-			else:	
-				self.mca_tools.mca_catchment_renderer(output_catchment)
-		self.dlg.progress_mca.setValue(5)
+				origins = QgsVectorLayer("%s" % (origins_path) , "", "ogr")
+			# loading settings
+			radius = self.dlg.radius.value()
+			network_tolerance = self.dlg.network_tolerance.value()
+			polygon_tolerance = self.dlg.polygon_tolerance.value()
+			crs = network.crs()
+			self.dlg.progress_mca.setValue(1)
+			# setting up the output network
+			output_network = QgsVectorLayer("linestring?crs="+ crs.toWkt(), "mca_network", "memory")
+
+			# setup of output polygon
+			output_catchment = QgsVectorLayer("polygon?crs="+ crs.toWkt(), "mca_catchment", "memory")
+			output_catchment.dataProvider().addAttributes([QgsField("origin", QVariant.String)])
+			output_catchment.updateFields()
+			self.dlg.progress_mca.setValue(2)
+
+			# build graph
+			graph, tied_points, origins = self.mca_tools.graph_builder(network,origins,network_tolerance)
+			self.dlg.progress_mca.setValue(3)
+			# run analysis
+			self.mca_tools.mca(
+				graph,
+				tied_points,
+				output_network,
+				output_catchment,
+				polygon_tolerance,
+				radius)
+			self.dlg.progress_mca.setValue(4)
+			# render network
+			if self.dlg.check_network.isChecked() == True:
+				# saving and rendering network in shapefile format
+				if self.dlg.path_output_network.text():
+					self.mca_tools.mca_vector_writer(output_network, output_network_path,crs)
+					output_network = QgsVectorLayer(output_network_path, 'mca_network', 'ogr')
+					self.mca_tools.mca_network_renderer(output_network,radius)
+				# rendering the temporary network
+				else:
+					self.mca_tools.mca_network_renderer(output_network, radius)
+			# render catchments
+			if self.dlg.check_polygon.isChecked() == True:
+				# saving and rendering the catchment in shapefile format
+				if self.dlg.path_output_polygon.text():
+					self.mca_tools.mca_vector_writer(output_catchment, output_polygon_path,crs)
+					output_polygon = QgsVectorLayer(output_polygon_path, 'mca_catchment', 'ogr')
+					self.mca_tools.mca_catchment_renderer(output_polygon)
+				# rendering the temporary catchment
+				else:	
+					self.mca_tools.mca_catchment_renderer(output_catchment)
+			self.dlg.progress_mca.setValue(5)
 
 	def active_layers(self):
 		# list of active layers for the comboxes
