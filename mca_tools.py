@@ -11,6 +11,7 @@ import math
 
 
 def graph_builder(network_lines, origin_points, tolerance):
+def graph_builder(network_lines, origin_points, tolerance):
     # Settings
     crs = network_lines.crs()
     epsg = crs.authid()
