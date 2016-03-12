@@ -1,13 +1,19 @@
-# Dependencies
+# Build-in dependencies
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
 from qgis.core import *
 from qgis.networkanalysis import *
 
-from shapely.ops import cascaded_union, polygonize
-from scipy.spatial import Delaunay
 import math
+
+# External dependencies
+try:
+    from shapely.ops import cascaded_union, polygonize, triangulate
+
+    ex_dep_loaded = True
+except ImportError,e:
+    ex_dep_loaded = False
 
 
 def graph_builder(network_lines, origin_points, tolerance):
@@ -37,33 +43,33 @@ def graph_builder(network_lines, origin_points, tolerance):
 
 
 def alpha_shape(points, alpha):
-    # empty triangle list
+    # Empty triangle list
     pl_lines = []
 
-    # create delaunay triangulation
-    pl_p_tri = Delaunay(points)
+    # Create delaunay triangulation
+    pl_p_tri = triangulate(points)
 
-    # assess triangles
-    for a, b, c in pl_p_tri.vertices:
+    # Assess triangles
+    for a, b, c in (triangle.wkt for triangle in pl_p_tri)
         coord_a = points[a]
         coord_b = points[b]
         coord_c = points[c]
 
-        # calculating length of triangle sides
+        # Calculating length of triangle sides
         a = math.sqrt((coord_a[0] - coord_b[0]) ** 2 + (coord_a[1] - coord_b[1]) ** 2)
         b = math.sqrt((coord_a[0] - coord_c[0]) ** 2 + (coord_a[1] - coord_c[1]) ** 2)
         c = math.sqrt((coord_c[0] - coord_b[0]) ** 2 + (coord_c[1] - coord_b[1]) ** 2)
 
-        # calculating circumcircle radius
+        # Calculating circumcircle radius
         circum_rad = (a * b * c) / math.sqrt((a + b + c) * (b + c - a) * (c + a - b) * (a + b - c))
 
-        # circumcircle radius filter
+        # Circumcircle radius filter
         if circum_rad < alpha:
             pl_lines.append((coord_a, coord_b))
             pl_lines.append((coord_a, coord_c))
             pl_lines.append((coord_c, coord_b))
 
-    # circumcircle radius filter
+    # Circumcircle radius filter
     pl_triangles = list(polygonize(pl_lines))
     pl_polygon = cascaded_union(pl_triangles)
 
