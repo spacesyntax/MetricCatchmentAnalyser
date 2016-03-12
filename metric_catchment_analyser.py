@@ -403,7 +403,7 @@ class MetricCatchmentAnalyser:
         self.dlg.progress_mca.reset()
 
     def run(self):
-        if self.mca_tools.ex_dep_loaded = False:
+        if self.mca_tools.ex_dep_loaded == False:
             self.iface.messageBar().pushMessage(
                     "Metric Catchment Analyser: ",
                     "Dependencies failed to load",

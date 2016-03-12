@@ -17,7 +17,6 @@ except ImportError,e:
 
 
 def graph_builder(network_lines, origin_points, tolerance):
-def graph_builder(network_lines, origin_points, tolerance):
     # Settings
     crs = network_lines.crs()
     epsg = crs.authid()
@@ -25,7 +24,7 @@ def graph_builder(network_lines, origin_points, tolerance):
 
     # Reading crs and epsg
     director = QgsLineVectorLayerDirector(network_lines, -1, '', '', '', 3)
-    properter = QgsDistanceArcProperter()
+    properter = QgsDistanceArcProperter() # change to new properter
     director.addProperter(properter)
     builder = QgsGraphBuilder(crs, otf, tolerance, epsg)
 
@@ -50,7 +49,7 @@ def alpha_shape(points, alpha):
     pl_p_tri = triangulate(points)
 
     # Assess triangles
-    for a, b, c in (triangle.wkt for triangle in pl_p_tri)
+    for a, b, c in pl_p_tri.wkt:
         coord_a = points[a]
         coord_b = points[b]
         coord_c = points[c]
