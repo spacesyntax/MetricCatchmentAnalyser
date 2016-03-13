@@ -44,12 +44,12 @@ def graph_builder(network_lines, origin_points, tolerance):
 def alpha_shape(points, alpha):
     # Empty triangle list
     pl_lines = []
-
+    print points
     # Create delaunay triangulation
     pl_p_tri = triangulate(points)
 
     # Assess triangles
-    for a, b, c in pl_p_tri.wkt:
+    for a, b, c, d in pl_p_tri.wkt:
         coord_a = points[a]
         coord_b = points[b]
         coord_c = points[c]
