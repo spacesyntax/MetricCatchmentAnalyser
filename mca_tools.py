@@ -49,10 +49,10 @@ def alpha_shape(points, alpha):
     pl_p_tri = triangulate(points)
 
     # Assess triangles
-    for a, b, c, d in pl_p_tri.wkt:
-        coord_a = points[a]
-        coord_b = points[b]
-        coord_c = points[c]
+    for i in pl_p_tri:
+        coord_a = i.exterior.coords()[1]
+        coord_b = i.exterior.coords()[2]
+        coord_c = i.exterior.coords()[3]
 
         # Calculating length of triangle sides
         a = math.sqrt((coord_a[0] - coord_b[0]) ** 2 + (coord_a[1] - coord_b[1]) ** 2)
