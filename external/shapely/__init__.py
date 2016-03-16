@@ -1,1 +1,4 @@
-__version__ = "1.2.18"
+__version__ = "1.5.13"
+
+from ops import cascaded_union, polygonize, triangulate
+from geometry import multipoint

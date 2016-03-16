@@ -6,7 +6,7 @@ from ctypes import cast, POINTER
 
 from shapely.coords import required
 from shapely.geos import lgeos, DimensionError
-from shapely.geometry.base import BaseGeometry
+from shapely.geometry.base import BaseGeometry, geos_geom_from_py
 from shapely.geometry.proxy import CachingGeometryProxy
 
 __all__ = ['Point', 'asPoint']
@@ -16,8 +16,8 @@ class Point(BaseGeometry):
     """
     A zero dimensional feature
 
-    A point has zero length and zero area. 
-    
+    A point has zero length and zero area.
+
     Attributes
     ----------
     x, y, z : float
@@ -25,9 +25,8 @@ class Point(BaseGeometry):
 
     Example
     -------
-    
       >>> p = Point(1.0, -1.0)
-      >>> print p
+      >>> print(p)
       POINT (1.0000000000000000 -1.0000000000000000)
       >>> p.y
       -1.0
@@ -55,25 +54,45 @@ class Point(BaseGeometry):
     def x(self):
         """Return x coordinate."""
         return self.coords[0][0]
-    
+
     @property
     def y(self):
         """Return y coordinate."""
         return self.coords[0][1]
-    
+
     @property
     def z(self):
         """Return z coordinate."""
         if self._ndim != 3:
             raise DimensionError("This point has no z coordinate.")
         return self.coords[0][2]
-    
+
     @property
     def __geo_interface__(self):
         return {
             'type': 'Point',
             'coordinates': self.coords[0]
             }
+
+    def svg(self, scale_factor=1., fill_color=None):
+        """Returns SVG circle element for the Point geometry.
+
+        Parameters
+        ==========
+        scale_factor : float
+            Multiplication factor for the SVG circle diameter.  Default is 1.
+        fill_color : str, optional
+            Hex string for fill color. Default is to use "#66cc99" if
+            geometry is valid, and "#ff3333" if invalid.
+        """
+        if self.is_empty:
+            return '<g />'
+        if fill_color is None:
+            fill_color = "#66cc99" if self.is_valid else "#ff3333"
+        return (
+            '<circle cx="{0.x}" cy="{0.y}" r="{1}" '
+            'stroke="#555555" stroke-width="{2}" fill="{3}" opacity="0.6" />'
+            ).format(self, 3. * scale_factor, 1. * scale_factor, fill_color)
 
     @property
     def ctypes(self):
@@ -114,9 +133,8 @@ class Point(BaseGeometry):
     @property
     def xy(self):
         """Separate arrays of X and Y coordinate values
-        
+
         Example:
-        
           >>> x, y = Point(0, 0).xy
           >>> list(x)
           [0.0]
@@ -128,7 +146,7 @@ class Point(BaseGeometry):
 
 class PointAdapter(CachingGeometryProxy, Point):
 
-    _owned = False
+    _other_owned = False
 
     def __init__(self, context):
         self.context = context
@@ -168,11 +186,14 @@ def asPoint(context):
 
 
 def geos_point_from_py(ob, update_geom=None, update_ndim=0):
-    """Create a GEOS geom from an object that is a coordinate sequence
+    """Create a GEOS geom from an object that is a Point, a coordinate sequence
     or that provides the array interface.
 
     Returns the GEOS geometry and the number of its dimensions.
     """
+    if isinstance(ob, Point):
+        return geos_geom_from_py(ob)
+
     # If numpy is present, we use numpy.require to ensure that we have a
     # C-continguous array that owns its data. View data will be copied.
     ob = required(ob)
@@ -185,7 +206,7 @@ def geos_point_from_py(ob, update_geom=None, update_ndim=0):
 
         dz = None
         da = array['data']
-        if type(da) == type((0,)):
+        if isinstance(da, tuple):
             cdata = da[0]
             # If we had numpy, we would do
             # from numpy.ctypeslib import as_ctypes
@@ -195,17 +216,18 @@ def geos_point_from_py(ob, update_geom=None, update_ndim=0):
             dy = c_double(cp[1])
             if n == 3:
                 dz = c_double(cp[2])
-                ndim = 3
         else:
             dx, dy = da[0:2]
             if n == 3:
                 dz = da[2]
-                ndim = 3
 
     except AttributeError:
         # Fall back on the case of Python sequence data
         # Accept either (x, y) or [(x, y)]
-        if type(ob[0]) == type(tuple()):
+        if not hasattr(ob, '__getitem__'):  # Iterators, e.g. Python 3 zip
+            ob = list(ob)
+
+        if isinstance(ob[0], tuple):
             coords = ob[0]
         else:
             coords = ob
@@ -220,24 +242,26 @@ def geos_point_from_py(ob, update_geom=None, update_ndim=0):
         cs = lgeos.GEOSGeom_getCoordSeq(update_geom)
         if n != update_ndim:
             raise ValueError(
-            "Wrong coordinate dimensions; this geometry has dimensions: %d" \
-            % update_ndim)
+                "Wrong coordinate dimensions; this geometry has dimensions: "
+                "%d" % update_ndim)
     else:
         cs = lgeos.GEOSCoordSeq_create(1, n)
-    
+
     # Because of a bug in the GEOS C API, always set X before Y
     lgeos.GEOSCoordSeq_setX(cs, 0, dx)
     lgeos.GEOSCoordSeq_setY(cs, 0, dy)
     if n == 3:
         lgeos.GEOSCoordSeq_setZ(cs, 0, dz)
-   
+
     if update_geom:
         return None
     else:
         return lgeos.GEOSGeom_createPoint(cs), n
 
+
 def update_point_from_py(geom, ob):
     geos_point_from_py(ob, geom._geom, geom._ndim)
+
 
 # Test runner
 def _test():

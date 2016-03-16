@@ -1,15 +1,16 @@
 # Build-in dependencies
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-
 from qgis.core import *
 from qgis.networkanalysis import *
-
 import math
+# Custom cost builder
+#import arc_properter
 
-# External dependencies
+# External dependency
 try:
-    from shapely.ops import cascaded_union, polygonize, triangulate
+    from external.shapely.ops import cascaded_union, polygonize, triangulate
+    from external.shapely.geometry import multipoint
 
     ex_dep_loaded = True
 except ImportError,e:
@@ -24,7 +25,7 @@ def graph_builder(network_lines, origin_points, tolerance):
 
     # Reading crs and epsg
     director = QgsLineVectorLayerDirector(network_lines, -1, '', '', '', 3)
-    properter = QgsDistanceArcProperter() # change to new properter
+    properter = arc_properter() # change to new properter
     director.addProperter(properter)
     builder = QgsGraphBuilder(crs, otf, tolerance, epsg)
 
@@ -44,9 +45,12 @@ def graph_builder(network_lines, origin_points, tolerance):
 def alpha_shape(points, alpha):
     # Empty triangle list
     pl_lines = []
-    print points
+
+    # Transform points into Shapely's MultiPoint format
+    multi_points = MultiPoint(points)
+
     # Create delaunay triangulation
-    pl_p_tri = triangulate(points)
+    pl_p_tri = triangulate(multi_points)
 
     # Assess triangles
     for i in pl_p_tri:
