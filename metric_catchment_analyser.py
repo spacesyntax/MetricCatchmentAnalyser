@@ -333,6 +333,7 @@ class MetricCatchmentAnalyser:
             polygon_tolerance = self.dlg.polygon_tolerance.value()
             crs = network.crs()
             self.dlg.progress_mca.setValue(1)
+
             # setting up the output network
             output_network = QgsVectorLayer("linestring?crs="+ crs.toWkt(), "mca_network", "memory")
 

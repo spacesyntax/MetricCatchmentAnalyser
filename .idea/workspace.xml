@@ -2,88 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="043a5be7-7f84-4699-b1fb-8ac8bcd37717" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/external/__init__.py" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/external/shapely/examples/world.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/external/shapely/speedups/_speedups.c" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/external/shapely/speedups/_speedups.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/external/shapely/speedups/_speedups.pyd" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/external/shapely/tests/Array.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/external/shapely/tests/GeoInterface.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/external/shapely/tests/IterOps.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/external/shapely/tests/LineString.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/external/shapely/tests/MultiLineString.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/external/shapely/tests/MultiPoint.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/external/shapely/tests/MultiPolygon.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/external/shapely/tests/Operations.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/external/shapely/tests/Operators.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/external/shapely/tests/Persist.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/external/shapely/tests/Point.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/external/shapely/tests/Polygon.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/external/shapely/tests/Predicates.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/external/shapely/tests/__init__.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/external/shapely/tests/attribute-chains.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/external/shapely/tests/binascii_hex.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/external/shapely/tests/cascaded_union.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/external/shapely/tests/dimensions.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/external/shapely/tests/invalid_intersection.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/external/shapely/tests/linemerge.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/external/shapely/tests/polygonize.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/external/shapely/tests/test_affinity.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/external/shapely/tests/test_box.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/external/shapely/tests/test_cga.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/external/shapely/tests/test_collection.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/external/shapely/tests/test_delegated.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/external/shapely/tests/test_dlls.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/external/shapely/tests/test_doctests.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/external/shapely/tests/test_emptiness.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/external/shapely/tests/test_equality.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/external/shapely/tests/test_geomseq.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/external/shapely/tests/test_getitem.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/external/shapely/tests/test_linear_referencing.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/external/shapely/tests/test_mapping.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/external/shapely/tests/test_ndarrays.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/external/shapely/tests/test_pickle.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/external/shapely/tests/test_prepared.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/external/shapely/tests/test_products_z.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/external/shapely/tests/test_singularity.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/external/shapely/tests/test_speedups.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/external/shapely/tests/test_transform.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/external/shapely/tests/test_unary_union.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/external/shapely/tests/test_validation.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/external/shapely/tests/test_xy.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/external/shapely/tests/threading_test.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/external/shapely/tests/wkt_locale.txt" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/arc_properter.py" afterPath="$PROJECT_DIR$/arc_properter.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/external/shapely/__init__.py" afterPath="$PROJECT_DIR$/external/shapely/__init__.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/external/shapely/affinity.py" afterPath="$PROJECT_DIR$/external/shapely/affinity.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/external/shapely/algorithms/cga.py" afterPath="$PROJECT_DIR$/external/shapely/algorithms/cga.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/external/shapely/coords.py" afterPath="$PROJECT_DIR$/external/shapely/coords.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/external/shapely/ctypes_declarations.py" afterPath="$PROJECT_DIR$/external/shapely/ctypes_declarations.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/external/shapely/geometry/__init__.py" afterPath="$PROJECT_DIR$/external/shapely/geometry/__init__.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/external/shapely/geometry/base.py" afterPath="$PROJECT_DIR$/external/shapely/geometry/base.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/external/shapely/geometry/collection.py" afterPath="$PROJECT_DIR$/external/shapely/geometry/collection.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/external/shapely/geometry/geo.py" afterPath="$PROJECT_DIR$/external/shapely/geometry/geo.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/external/shapely/geometry/linestring.py" afterPath="$PROJECT_DIR$/external/shapely/geometry/linestring.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/external/shapely/geometry/multilinestring.py" afterPath="$PROJECT_DIR$/external/shapely/geometry/multilinestring.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/external/shapely/geometry/multipoint.py" afterPath="$PROJECT_DIR$/external/shapely/geometry/multipoint.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/external/shapely/geometry/multipolygon.py" afterPath="$PROJECT_DIR$/external/shapely/geometry/multipolygon.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/external/shapely/geometry/point.py" afterPath="$PROJECT_DIR$/external/shapely/geometry/point.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/external/shapely/geometry/polygon.py" afterPath="$PROJECT_DIR$/external/shapely/geometry/polygon.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/external/shapely/geometry/proxy.py" afterPath="$PROJECT_DIR$/external/shapely/geometry/proxy.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/external/shapely/geos.py" afterPath="$PROJECT_DIR$/external/shapely/geos.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/external/shapely/impl.py" afterPath="$PROJECT_DIR$/external/shapely/impl.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/external/shapely/iterops.py" afterPath="$PROJECT_DIR$/external/shapely/iterops.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/external/shapely/linref.py" afterPath="$PROJECT_DIR$/external/shapely/linref.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/external/shapely/ops.py" afterPath="$PROJECT_DIR$/external/shapely/ops.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/external/shapely/predicates.py" afterPath="$PROJECT_DIR$/external/shapely/predicates.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/external/shapely/prepared.py" afterPath="$PROJECT_DIR$/external/shapely/prepared.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/external/shapely/speedups/__init__.py" afterPath="$PROJECT_DIR$/external/shapely/speedups/__init__.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/external/shapely/topology.py" afterPath="$PROJECT_DIR$/external/shapely/topology.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/external/shapely/validation.py" afterPath="$PROJECT_DIR$/external/shapely/validation.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/external/shapely/wkb.py" afterPath="$PROJECT_DIR$/external/shapely/wkb.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/external/shapely/wkt.py" afterPath="$PROJECT_DIR$/external/shapely/wkt.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/mca_tools.py" afterPath="$PROJECT_DIR$/mca_tools.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/metric_catchment_analyser.py" afterPath="$PROJECT_DIR$/metric_catchment_analyser.py" />
     </list>
     <ignored path="MetricCatchmentAnalyser.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -103,15 +26,38 @@
     <favorites_list name="MetricCatchmentAnalyser" />
   </component>
   <component name="FileEditorManager">
-    <leaf>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file leaf-file-name="mca_tools.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/mca_tools.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.14482759">
-              <caret line="7" column="1" selection-start-line="7" selection-start-column="1" selection-end-line="7" selection-end-column="1" />
+            <state vertical-scroll-proportion="0.5586207">
+              <caret line="32" column="8" selection-start-line="32" selection-start-column="8" selection-end-line="32" selection-end-column="8" />
               <folding>
                 <element signature="e#24#50#0" expanded="true" />
+                <element signature="e#1375#2582#0" expanded="false" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="arc_properter.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/arc_properter.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="7" column="0" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
+              <folding>
+                <element signature="e#0#26#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="__init__.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/external/__init__.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="0" column="11" selection-start-line="0" selection-start-column="11" selection-end-line="0" selection-end-column="11" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -120,7 +66,7 @@
         <entry file="file://$PROJECT_DIR$/metric_catchment_analyser.py">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="405" column="42" selection-start-line="405" selection-start-column="42" selection-end-line="405" selection-end-column="42" />
+              <caret line="335" column="0" selection-start-line="335" selection-start-column="0" selection-end-line="335" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -141,11 +87,11 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/metric_catchment_analyser.py" />
-        <option value="$PROJECT_DIR$/arc_properter.py" />
-        <option value="$PROJECT_DIR$/external/__init__.py" />
         <option value="$PROJECT_DIR$/external/shapely/__init__.py" />
+        <option value="$PROJECT_DIR$/external/__init__.py" />
+        <option value="$PROJECT_DIR$/arc_properter.py" />
         <option value="$PROJECT_DIR$/mca_tools.py" />
+        <option value="$PROJECT_DIR$/metric_catchment_analyser.py" />
       </list>
     </option>
   </component>
@@ -203,8 +149,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -223,8 +167,24 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="MetricCatchmentAnalyser" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="MetricCatchmentAnalyser" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="external" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
+      <pane id="Scope" />
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -384,6 +344,7 @@
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24609375" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -396,7 +357,6 @@
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
     </layout>
@@ -418,7 +378,7 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="2" />
+      <option name="time" value="3" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -426,14 +386,64 @@
     <entry file="file://$PROJECT_DIR$/mca_tools.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="45" column="0" selection-start-line="45" selection-start-column="0" selection-end-line="45" selection-end-column="0" />
+          <caret line="11" column="4" selection-start-line="11" selection-start-column="4" selection-end-line="12" selection-end-column="0" />
+          <folding>
+            <element signature="e#24#50#0" expanded="true" />
+            <element signature="e#1375#2582#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/external/shapely/ops.py">
+    <entry file="file://$PROJECT_DIR$/external/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/metric_catchment_analyser.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="405" column="42" selection-start-line="405" selection-start-column="42" selection-end-line="405" selection-end-column="42" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/mca_tools.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#24#50#0" expanded="true" />
+            <element signature="e#1375#2582#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/mca_tools.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#24#50#0" expanded="true" />
+            <element signature="e#1375#2582#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/metric_catchment_analyser.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="405" column="42" selection-start-line="405" selection-start-column="42" selection-end-line="405" selection-end-column="42" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/mca_tools.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="45" column="0" selection-start-line="45" selection-start-column="0" selection-end-line="45" selection-end-column="0" />
         </state>
       </provider>
     </entry>
@@ -448,7 +458,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -487,20 +496,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/external/shapely/wkt.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/external/shapely/topology.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/metric_catchment_analyser_dialog.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -512,14 +507,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/arc_properter.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.5586207">
-          <caret line="27" column="0" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
         </state>
       </provider>
     </entry>
@@ -527,6 +514,13 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/metric_catchment_analyser.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="335" column="0" selection-start-line="335" selection-start-column="0" selection-end-line="335" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -534,41 +528,28 @@
     <entry file="file://$PROJECT_DIR$/external/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="14" selection-start-line="0" selection-start-column="14" selection-end-line="0" selection-end-column="14" />
+          <caret line="0" column="11" selection-start-line="0" selection-start-column="11" selection-end-line="0" selection-end-column="11" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/external/shapely/__init__.py">
+    <entry file="file://$PROJECT_DIR$/arc_properter.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="3" column="31" selection-start-line="3" selection-start-column="31" selection-end-line="3" selection-end-column="31" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/external/shapely/ops.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.18620689">
-          <caret line="9" column="0" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/metric_catchment_analyser.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="405" column="42" selection-start-line="405" selection-start-column="42" selection-end-line="405" selection-end-column="42" />
-          <folding />
+          <caret line="7" column="0" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#26#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/mca_tools.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.14482759">
-          <caret line="7" column="1" selection-start-line="7" selection-start-column="1" selection-end-line="7" selection-end-column="1" />
+        <state vertical-scroll-proportion="0.5586207">
+          <caret line="32" column="8" selection-start-line="32" selection-start-column="8" selection-end-line="32" selection-end-column="8" />
           <folding>
             <element signature="e#24#50#0" expanded="true" />
+            <element signature="e#1375#2582#0" expanded="false" />
           </folding>
         </state>
       </provider>

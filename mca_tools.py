@@ -3,21 +3,23 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from qgis.core import *
 from qgis.networkanalysis import *
+from qgis.utils import *
 import math
+
 # Custom cost builder
-#import arc_properter
+from arc_properter import customProperter
 
 # External dependency
 try:
-    from external.shapely.ops import cascaded_union, polygonize, triangulate
-    from external.shapely.geometry import multipoint
+    from shapely.ops import cascaded_union, polygonize, triangulate
+    from shapely.geometry import MultiPoint
 
     ex_dep_loaded = True
 except ImportError,e:
     ex_dep_loaded = False
 
 
-def graph_builder(network_lines, origin_points, tolerance):
+def graph_builder(network_lines, origin_points, tolerance, custom_cost_column, default_cost_column):
     # Settings
     crs = network_lines.crs()
     epsg = crs.authid()
@@ -25,7 +27,10 @@ def graph_builder(network_lines, origin_points, tolerance):
 
     # Reading crs and epsg
     director = QgsLineVectorLayerDirector(network_lines, -1, '', '', '', 3)
-    properter = arc_properter() # change to new properter
+    if custom_cost_column = -1:
+        properter = QgsDistanceArcProperter()
+    else:
+        properter = customProperter(custom_cost_column,default_cost_column)
     director.addProperter(properter)
     builder = QgsGraphBuilder(crs, otf, tolerance, epsg)
 
@@ -45,18 +50,15 @@ def graph_builder(network_lines, origin_points, tolerance):
 def alpha_shape(points, alpha):
     # Empty triangle list
     pl_lines = []
-
     # Transform points into Shapely's MultiPoint format
     multi_points = MultiPoint(points)
-
     # Create delaunay triangulation
-    pl_p_tri = triangulate(multi_points)
-
+    triangles = triangulate(multi_points)
     # Assess triangles
-    for i in pl_p_tri:
-        coord_a = i.exterior.coords()[1]
-        coord_b = i.exterior.coords()[2]
-        coord_c = i.exterior.coords()[3]
+    for i in triangles:
+        coord_a = list(i.exterior.coords)[1]
+        coord_b = list(i.exterior.coords)[2]
+        coord_c = list(i.exterior.coords)[3]
 
         # Calculating length of triangle sides
         a = math.sqrt((coord_a[0] - coord_b[0]) ** 2 + (coord_a[1] - coord_b[1]) ** 2)
