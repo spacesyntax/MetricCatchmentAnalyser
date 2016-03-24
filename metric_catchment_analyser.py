@@ -73,20 +73,24 @@ class MetricCatchmentAnalyser:
         # TODO: We are going to let the user set this up in a future iteration
         self.toolbar = self.iface.addToolBar(u'MetricCatchmentAnalyser')
         self.toolbar.setObjectName(u'MetricCatchmentAnalyser')
-        # setup lineEdit boxes
+        # Setup input network
         self.dlg.path_input_network.clear()
-        self.dlg.path_input_origins.clear()
-        self.dlg.path_output_network.setPlaceholderText("Save as temporary layer...")
-        self.dlg.path_output_polygon.setPlaceholderText("Save as temporary layer...")
-        # connect input browse buttons
         self.dlg.browse_input_network.clicked.connect(self.browse_input_network)
-        self.dlg.browse_input_origins.clicked.connect(self.browse_input_origins)
-        # connect drop-down menus
         self.dlg.choose_network.activated.connect(self.choose_network)
+        # Setup input origins
+        self.dlg.path_input_origins.clear()
+        self.dlg.browse_input_origins.clicked.connect(self.browse_input_origins)
         self.dlg.choose_origins.activated.connect(self.choose_origins)
-        # connect output browse buttons
+        # Setup output network
         self.dlg.browse_output_network.clicked.connect(self.browse_output_network)
+        self.dlg.path_output_network.setPlaceholderText("Save as temporary layer...")
+        # Setup output catchment
         self.dlg.browse_output_polygon.clicked.connect(self.browse_output_polygon)
+        self.dlg.path_output_polygon.setPlaceholderText("Save as temporary layer...")
+        # Setup cost
+        self.dlg.choose_cost.activated.connect(self.choose_cost)
+        # Setup names
+        self.dlg.choose_name.activated.connect(self.choose_name)
         # connect refresh button
         self.dlg.refresh_mca.clicked.connect(self.refresh)
         # connect the run button
@@ -205,8 +209,29 @@ class MetricCatchmentAnalyser:
         # remove the toolbar
         del self.toolbar
 
-    def choose_network(self):
-        layers = self.iface.legendInterface().layers()
+    def choose_cost(self):
+        if self.dlg.check_cost.isChecked() == True:
+            # get network and origins
+            network_name = self.dlg.choose_network.currentText()
+            network_path = self.dlg.path_input_network.text()
+            # get active layers
+            active_layers = self.iface.legendInterface().layers()
+            active_layer_names = []
+            if not network_path:
+            self.iface.messageBar().pushMessage(
+                "Metric Catchment Analyser: ",
+                "No network selected!",
+                level=QgsMessageBar.WARNING,
+                duration=5)
+            else:
+                # loading network
+                if network_name in active_layer_names:
+                network = active_layers[active_layer_names.index(network_name)]
+                else:
+                network = QgsVectorLayer("%s" % (network_path) , "", "ogr")
+
+            fields = network.pendingFields()
+            field_names = [i.name() for i in fields]
         layer_name = self.dlg.choose_network.currentText()
         layer_index = self.dlg.choose_network.currentIndex()
         network = layers[layer_index]
@@ -238,6 +263,20 @@ class MetricCatchmentAnalyser:
             else:
                 self.dlg.path_input_network.setText(filename)
                 return network
+
+        def choose_network(self):
+        layers = self.iface.legendInterface().layers()
+        layer_name = self.dlg.choose_network.currentText()
+        layer_index = self.dlg.choose_network.currentIndex()
+        network = layers[layer_index]
+        if not network.isValid():
+            self.iface.messageBar().pushMessage(
+                "Metric Catchment Analyser: ",
+                "Invalid network file!",
+                level=QgsMessageBar.WARNING,
+                duration=5)
+        else:
+            self.dlg.path_input_network.setText(layer_name)
 
     def choose_origins(self):
         layers = self.iface.legendInterface().layers()

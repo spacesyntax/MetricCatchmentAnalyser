@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>509</width>
-    <height>498</height>
+    <height>703</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -28,12 +28,15 @@
   <layout class="QGridLayout" name="gridLayout_2">
    <item row="0" column="0">
     <layout class="QGridLayout" name="gridLayout">
-     <item row="13" column="1">
-      <widget class="QLabel" name="label_5">
+     <item row="28" column="1">
+      <widget class="QPushButton" name="close_mca">
        <property name="text">
-        <string>Polygon tolerance</string>
+        <string>Close</string>
        </property>
       </widget>
+     </item>
+     <item row="13" column="0">
+      <widget class="QLineEdit" name="name_column"/>
      </item>
      <item row="3" column="0">
       <widget class="QComboBox" name="choose_network">
@@ -45,14 +48,21 @@
        </property>
       </widget>
      </item>
-     <item row="11" column="1">
+     <item row="18" column="1">
+      <widget class="QLabel" name="label_5">
+       <property name="text">
+        <string>Polygon tolerance</string>
+       </property>
+      </widget>
+     </item>
+     <item row="16" column="1">
       <widget class="QLabel" name="label">
        <property name="text">
         <string>Network tolerance</string>
        </property>
       </widget>
      </item>
-     <item row="11" column="0">
+     <item row="16" column="0">
       <widget class="QDoubleSpinBox" name="network_tolerance">
        <property name="suffix">
         <string>m</string>
@@ -68,10 +78,10 @@
        </property>
       </widget>
      </item>
-     <item row="16" column="0">
+     <item row="21" column="0">
       <widget class="QLineEdit" name="path_output_network"/>
      </item>
-     <item row="7" column="0">
+     <item row="9" column="0">
       <widget class="QComboBox" name="choose_origins">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -81,14 +91,14 @@
        </property>
       </widget>
      </item>
-     <item row="19" column="1">
+     <item row="24" column="1">
       <widget class="QPushButton" name="browse_output_polygon">
        <property name="text">
         <string>Save</string>
        </property>
       </widget>
      </item>
-     <item row="17" column="0">
+     <item row="22" column="0">
       <widget class="QCheckBox" name="check_polygon">
        <property name="text">
         <string>Catchment polygon</string>
@@ -98,21 +108,21 @@
        </property>
       </widget>
      </item>
-     <item row="16" column="1">
+     <item row="21" column="1">
       <widget class="QPushButton" name="browse_output_network">
        <property name="text">
         <string>Save</string>
        </property>
       </widget>
      </item>
-     <item row="14" column="0" colspan="2">
+     <item row="19" column="0" colspan="2">
       <widget class="Line" name="line_2">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
       </widget>
      </item>
-     <item row="9" column="0" colspan="2">
+     <item row="14" column="0" colspan="2">
       <widget class="Line" name="line">
        <property name="sizePolicy">
         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
@@ -125,24 +135,24 @@
        </property>
       </widget>
      </item>
-     <item row="24" column="1">
+     <item row="29" column="1">
       <widget class="QPushButton" name="run_mca">
        <property name="text">
         <string>Run</string>
        </property>
       </widget>
      </item>
-     <item row="19" column="0">
+     <item row="24" column="0">
       <widget class="QLineEdit" name="path_output_polygon"/>
      </item>
-     <item row="10" column="1">
+     <item row="15" column="1">
       <widget class="QLabel" name="label_4">
        <property name="text">
         <string>Radius</string>
        </property>
       </widget>
      </item>
-     <item row="15" column="0">
+     <item row="20" column="0">
       <widget class="QCheckBox" name="check_network">
        <property name="text">
         <string>Catchment network</string>
@@ -165,14 +175,7 @@
        </property>
       </widget>
      </item>
-     <item row="23" column="1">
-      <widget class="QPushButton" name="close_mca">
-       <property name="text">
-        <string>Close</string>
-       </property>
-      </widget>
-     </item>
-     <item row="6" column="0">
+     <item row="8" column="0">
       <widget class="QLabel" name="origin_layer">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -185,12 +188,18 @@
        </property>
       </widget>
      </item>
-     <item row="8" column="1">
+     <item row="10" column="0">
+      <widget class="QLineEdit" name="path_input_origins"/>
+     </item>
+     <item row="10" column="1">
       <widget class="QPushButton" name="browse_input_origins">
        <property name="text">
         <string>Browse</string>
        </property>
       </widget>
+     </item>
+     <item row="4" column="0">
+      <widget class="QLineEdit" name="path_input_network"/>
      </item>
      <item row="4" column="1">
       <widget class="QPushButton" name="browse_input_network">
@@ -199,20 +208,14 @@
        </property>
       </widget>
      </item>
-     <item row="8" column="0">
-      <widget class="QLineEdit" name="path_input_origins"/>
-     </item>
-     <item row="4" column="0">
-      <widget class="QLineEdit" name="path_input_network"/>
-     </item>
-     <item row="20" column="0" colspan="2">
+     <item row="25" column="0" colspan="2">
       <widget class="Line" name="line_3">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
       </widget>
      </item>
-     <item row="13" column="0">
+     <item row="18" column="0">
       <widget class="QSpinBox" name="polygon_tolerance">
        <property name="suffix">
         <string>m</string>
@@ -228,7 +231,7 @@
        </property>
       </widget>
      </item>
-     <item row="10" column="0">
+     <item row="15" column="0">
       <widget class="QSpinBox" name="radius">
        <property name="suffix">
         <string>m</string>
@@ -244,19 +247,42 @@
        </property>
       </widget>
      </item>
-     <item row="22" column="1">
+     <item row="28" column="0">
+      <widget class="QProgressBar" name="progress_mca">
+       <property name="value">
+        <number>24</number>
+       </property>
+      </widget>
+     </item>
+     <item row="27" column="1">
       <widget class="QPushButton" name="refresh_mca">
        <property name="text">
         <string>Refresh</string>
        </property>
       </widget>
      </item>
-     <item row="23" column="0">
-      <widget class="QProgressBar" name="progress_mca">
-       <property name="value">
-        <number>24</number>
+     <item row="12" column="0">
+      <widget class="QComboBox" name="choose_name"/>
+     </item>
+     <item row="11" column="0">
+      <widget class="QCheckBox" name="check_name">
+       <property name="text">
+        <string>Use origin names</string>
        </property>
       </widget>
+     </item>
+     <item row="6" column="0">
+      <widget class="QComboBox" name="choose_cost"/>
+     </item>
+     <item row="5" column="0">
+      <widget class="QCheckBox" name="check_cost">
+       <property name="text">
+        <string>Use custom network cost</string>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="0">
+      <widget class="QLineEdit" name="cost_column"/>
      </item>
     </layout>
    </item>

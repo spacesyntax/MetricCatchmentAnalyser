@@ -5,19 +5,31 @@ from qgis.core import *
 from qgis.networkanalysis import *
 from qgis.utils import *
 import math
+import sys
+import inspect
 
 # Custom cost builder
 from arc_properter import customProperter
 
-# External dependency
+# Loading shapely
 try:
     from shapely.ops import cascaded_union, polygonize, triangulate
     from shapely.geometry import MultiPoint
 
     ex_dep_loaded = True
 except ImportError,e:
-    ex_dep_loaded = False
-
+    # Find path of external
+    cmd_folder = \
+        os.path.realpath(os.path.abspath(os.path.join(os.path.split(inspect.getfile(inspect.currentframe()))[0],"external")))
+    # If path not in system path add it
+    if cmd_folder not in sys.path:
+        sys.path.insert(0, cmd_folder)
+    # Load shapely dependency again
+    try:
+        from shapely.ops import cascaded_union, polygonize, triangulate
+        from shapely.geometry import MultiPoint
+    except ImportError,e:
+        ex_dep_loaded = False
 
 def graph_builder(network_lines, origin_points, tolerance, custom_cost_column, default_cost_column):
     # Settings
@@ -27,10 +39,10 @@ def graph_builder(network_lines, origin_points, tolerance, custom_cost_column, d
 
     # Reading crs and epsg
     director = QgsLineVectorLayerDirector(network_lines, -1, '', '', '', 3)
-    if custom_cost_column = -1:
-        properter = QgsDistanceArcProperter()
-    else:
-        properter = customProperter(custom_cost_column,default_cost_column)
+    #if custom_cost_column = -1:
+    properter = QgsDistanceArcProperter()
+    #else:
+        #properter = customProperter(custom_cost_column,default_cost_column)
     director.addProperter(properter)
     builder = QgsGraphBuilder(crs, otf, tolerance, epsg)
 
