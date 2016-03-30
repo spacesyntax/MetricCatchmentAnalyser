@@ -36,7 +36,11 @@
       </widget>
      </item>
      <item row="13" column="0">
-      <widget class="QLineEdit" name="name_column"/>
+      <widget class="QLineEdit" name="name_column">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+      </widget>
      </item>
      <item row="3" column="0">
       <widget class="QComboBox" name="choose_network">
@@ -262,27 +266,42 @@
       </widget>
      </item>
      <item row="12" column="0">
-      <widget class="QComboBox" name="choose_name"/>
+      <widget class="QComboBox" name="choose_name">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+      </widget>
      </item>
      <item row="11" column="0">
       <widget class="QCheckBox" name="check_name">
        <property name="text">
-        <string>Use origin names</string>
+        <string>Origin names</string>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
        </property>
       </widget>
      </item>
      <item row="6" column="0">
-      <widget class="QComboBox" name="choose_cost"/>
+      <widget class="QComboBox" name="choose_cost">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+      </widget>
      </item>
      <item row="5" column="0">
       <widget class="QCheckBox" name="check_cost">
        <property name="text">
-        <string>Use custom network cost</string>
+        <string>Custom network cost</string>
        </property>
       </widget>
      </item>
      <item row="7" column="0">
-      <widget class="QLineEdit" name="cost_column"/>
+      <widget class="QLineEdit" name="cost_column">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>

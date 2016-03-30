@@ -5,19 +5,19 @@
                                  A QGIS plugin
  Network based metric catchment analysis
                               -------------------
-        begin				 : 2016-02-13
-        git sha				 : $Format:%H$
-        copyright			 : (C) 2016 by Laurens Versluis
-        email				 : l.versluis@spacesyntax.com
+        begin                : 2016-02-13
+        git sha              : $Format:%H$
+        copyright            : (C) 2016 by Laurens Versluis
+        email                : l.versluis@spacesyntax.com
  ***************************************************************************/
 
 /***************************************************************************
- *																		   *
- *	 This program is free software; you can redistribute it and/or modify  *
- *	 it under the terms of the GNU General Public License as published by  *
- *	 the Free Software Foundation; either version 2 of the License, or	   *
- *	 (at your option) any later version.								   *
- *																		   *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
  ***************************************************************************/
 """
 from PyQt4.QtCore import *
@@ -88,8 +88,10 @@ class MetricCatchmentAnalyser:
         self.dlg.browse_output_polygon.clicked.connect(self.browse_output_polygon)
         self.dlg.path_output_polygon.setPlaceholderText("Save as temporary layer...")
         # Setup cost
+        self.dlg.check_cost.stateChanged.connect(self.choose_cost)
         self.dlg.choose_cost.activated.connect(self.choose_cost)
         # Setup names
+        self.dlg.check_name.stateChanged.connect(self.choose_name)
         self.dlg.choose_name.activated.connect(self.choose_name)
         # connect refresh button
         self.dlg.refresh_mca.clicked.connect(self.refresh)
@@ -209,45 +211,11 @@ class MetricCatchmentAnalyser:
         # remove the toolbar
         del self.toolbar
 
-    def choose_cost(self):
-        if self.dlg.check_cost.isChecked() == True:
-            # get network and origins
-            network_name = self.dlg.choose_network.currentText()
-            network_path = self.dlg.path_input_network.text()
-            # get active layers
-            active_layers = self.iface.legendInterface().layers()
-            active_layer_names = []
-            if not network_path:
-            self.iface.messageBar().pushMessage(
-                "Metric Catchment Analyser: ",
-                "No network selected!",
-                level=QgsMessageBar.WARNING,
-                duration=5)
-            else:
-                # loading network
-                if network_name in active_layer_names:
-                network = active_layers[active_layer_names.index(network_name)]
-                else:
-                network = QgsVectorLayer("%s" % (network_path) , "", "ogr")
-
-            fields = network.pendingFields()
-            field_names = [i.name() for i in fields]
-        layer_name = self.dlg.choose_network.currentText()
-        layer_index = self.dlg.choose_network.currentIndex()
-        network = layers[layer_index]
-        if not network.isValid():
-            self.iface.messageBar().pushMessage(
-                "Metric Catchment Analyser: ",
-                "Invalid network file!",
-                level=QgsMessageBar.WARNING,
-                duration=5)
-        else:
-            self.dlg.path_input_network.setText(layer_name)
-
     def browse_input_network(self):
         filename = QFileDialog.getOpenFileName(self.dlg, "Select input file ","", '*.shp')
         if filename:
             network = QgsVectorLayer(filename, 'input', 'ogr')
+            # Checking network layer
             if not network.isValid():
                 self.iface.messageBar().pushMessage(
                     "Metric Catchment Analyser: ",
@@ -261,10 +229,12 @@ class MetricCatchmentAnalyser:
                     level=QgsMessageBar.WARNING,
                     duration=5)
             else:
+                # Showing path/name of network 
                 self.dlg.path_input_network.setText(filename)
-                return network
+                # Activate custom cost option
+                self.choose_cost()
 
-        def choose_network(self):
+    def choose_network(self):
         layers = self.iface.legendInterface().layers()
         layer_name = self.dlg.choose_network.currentText()
         layer_index = self.dlg.choose_network.currentIndex()
@@ -277,6 +247,44 @@ class MetricCatchmentAnalyser:
                 duration=5)
         else:
             self.dlg.path_input_network.setText(layer_name)
+            # Activate custom cost option
+            self.choose_cost()
+        
+    def choose_cost(self):
+        if self.dlg.check_cost.isChecked() == True:
+            # Activate and refresh combobox
+            self.dlg.choose_cost.setEnabled(True)
+            self.dlg.choose_cost.clear()
+            self.dlg.cost_column.setEnabled(True)
+            self.dlg.cost_column.clear()
+            # Get origins table
+            network_table = self.dlg.choose_network.currentText()
+            network_path = self.dlg.path_input_network.text()
+            # Get active layers
+            active_layers = self.iface.legendInterface().layers()
+            active_layer_names = [layer.name() for layer in active_layers]
+            if not network_path:
+                self.iface.messageBar().pushMessage(
+                    "Metric Catchment Analyser: ",
+                    "No network selected!",
+                    level=QgsMessageBar.WARNING,
+                    duration=5)
+            else:
+                # loading network
+                if network_table in active_layer_names:
+                    network = active_layers[active_layer_names.index(network_table)]
+                else:
+                    network = QgsVectorLayer("%s" % (network_path) , "", "ogr")
+                # Creating field list
+                network_fields = network.pendingFields()
+                network_field_names = [field.name() for field in network_fields]
+                # Adding layers to the comboboxes
+                self.dlg.choose_cost.addItems(network_field_names)
+        elif self.dlg.check_cost.isChecked() == False:
+            self.dlg.choose_cost.setEnabled(False)
+            self.dlg.choose_cost.clear()
+            self.dlg.cost_column.setEnabled(False)
+            self.dlg.cost_column.clear()
 
     def choose_origins(self):
         layers = self.iface.legendInterface().layers()
@@ -286,11 +294,13 @@ class MetricCatchmentAnalyser:
         if not origins.isValid():
             self.iface.messageBar().pushMessage(
                 "Metric Catchment Analyser: ",
-                "Invalid network file!",
+                "Invalid origin file!",
                 level=QgsMessageBar.WARNING,
                 duration=5)
         else:
             self.dlg.path_input_origins.setText(layer_name)
+            # Activate custom name option
+            self.choose_name()
 
     def browse_input_origins(self):
         filename = QFileDialog.getOpenFileName(self.dlg, "Select input file ","", '*.shp')
@@ -310,13 +320,51 @@ class MetricCatchmentAnalyser:
                     duration=5)
             else:
                 self.dlg.path_input_origins.setText(filename)
-                return origins
+                # Activate custom name option
+                self.choose_name()
 
     def browse_output_network(self):
         file_name = QFileDialog.getSaveFileName(self.dlg, "Save output file ","mca_network", '*.shp')
         if file_name:
             self.dlg.path_output_network.setText(file_name)
 
+    def choose_name(self):
+        if self.dlg.check_name.isChecked() == True:
+            # Activate and refresh combobox
+            self.dlg.choose_name.setEnabled(True)
+            self.dlg.choose_name.clear()
+            self.dlg.name_column.setEnabled(True)
+            self.dlg.name_column.clear()
+            # Get origins table
+            origins_table = self.dlg.choose_origins.currentText()
+            origin_path = self.dlg.path_input_origins.text()
+            # Get active layers
+            active_layers = self.iface.legendInterface().layers()
+            active_layer_names = [layer.name() for layer in active_layers]
+            if not origin_path:
+                self.iface.messageBar().pushMessage(
+                    "Metric Catchment Analyser: ",
+                    "No origins selected!",
+                    level=QgsMessageBar.WARNING,
+                    duration=5)
+            else:
+                # loading origins
+                if origins_table in active_layer_names:
+                    origins = active_layers[active_layer_names.index(origins_table)]
+                else:
+                    origins = QgsVectorLayer("%s" % (origin_path) , "", "ogr")
+                # Creating field list
+                origins_fields = origins.pendingFields()
+                origin_field_names = [field.name() for field in origins_fields]
+                # Adding layers to the comboboxes
+                self.dlg.choose_name.addItems(origin_field_names)
+                self.dlg.path_name.setText(file_name)
+        elif self.dlg.check_name.isChecked() == False:
+            self.dlg.choose_name.setEnabled(False)
+            self.dlg.choose_name.clear()
+            self.dlg.name_column.setEnabled(False)
+            self.dlg.name_column.clear()
+            
     def browse_output_polygon(self):
         file_name = QFileDialog.getSaveFileName(self.dlg, "Save output file ","mca_catchment", '*.shp')
         if file_name:
@@ -327,8 +375,10 @@ class MetricCatchmentAnalyser:
         # get network and origins
         network_name = self.dlg.choose_network.currentText()
         network_path = self.dlg.path_input_network.text()
+        network_cost = self.dlg.cost_column.currentText()
         origins_name = self.dlg.choose_origins.currentText()
         origins_path = self.dlg.path_input_origins.text()
+        origins_name = self.dlg.name_column.currentText()
         output_network_path = self.dlg.path_output_network.text()
         output_polygon_path = self.dlg.path_output_polygon.text()
         # get active layers
@@ -383,7 +433,10 @@ class MetricCatchmentAnalyser:
             self.dlg.progress_mca.setValue(2)
 
             # build graph
-            graph, tied_points, origins = self.mca_tools.graph_builder(network,origins,network_tolerance)
+            if network_cost:
+                graph, tied_points, origins = self.mca_tools.graph_builder(network,origins,network_tolerance,True,network_cost)
+            else: 
+                graph, tied_points, origins = self.mca_tools.graph_builder(network,origins,network_tolerance,False,'')
             self.dlg.progress_mca.setValue(3)
             # run analysis
             self.mca_tools.mca(

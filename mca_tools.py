@@ -31,27 +31,27 @@ except ImportError,e:
     except ImportError,e:
         ex_dep_loaded = False
 
-def graph_builder(network_lines, origin_points, tolerance, custom_cost_column, default_cost_column):
+def graph_builder(network_lines, origin_points, tolerance, custom_cost, custom_cost_column):
     # Settings
     crs = network_lines.crs()
     epsg = crs.authid()
     otf = False
-
+    default_value = 0
     # Reading crs and epsg
     director = QgsLineVectorLayerDirector(network_lines, -1, '', '', '', 3)
-    #if custom_cost_column = -1:
-    properter = QgsDistanceArcProperter()
-    #else:
-        #properter = customProperter(custom_cost_column,default_cost_column)
+    # Cost calculator
+    if custom_cost == True:
+        properter = customProperter(custom_cost_column,default_value)
+    else:
+        properter = QgsDistanceArcProperter()
+    # Building graph
     director.addProperter(properter)
     builder = QgsGraphBuilder(crs, otf, tolerance, epsg)
-
     # Reading origins
     origins = []
     for f in origin_points.getFeatures():
         geom = f.geometry().asPoint()
         origins.append(geom)
-
     # Connect origin points to the director and build graph
     tied_origins = director.makeGraph(builder, origins)
     graph = builder.graph()
@@ -137,13 +137,13 @@ def mca_catchment_writer(output_catchment, mca_catchments, alpha):
         output_catchment.dataProvider().addFeatures([p])
 
 def mca_vector_writer(layer, path, crs):
-	shp_writer = QgsVectorFileWriter.writeAsVectorFormat(
-		layer,
-		r"%s" % path,
-		"utf-8",
-		crs,
-		"ESRI Shapefile")
-		
+    shp_writer = QgsVectorFileWriter.writeAsVectorFormat(
+        layer,
+        r"%s" % path,
+        "utf-8",
+        crs,
+        "ESRI Shapefile")
+        
 def mca(graph, tied_origins, output_network, output_catchment, alpha, radius):
     output_network.dataProvider().addAttributes([QgsField("id", QVariant.Int)])
     output_network.updateFields()
