@@ -31,32 +31,37 @@ except ImportError,e:
     except ImportError,e:
         ex_dep_loaded = False
 
-def graph_builder(network_lines, origin_points, tolerance, custom_cost, custom_cost_column):
+def graph_builder(network_lines, origin_points, origin_column, tolerance,custom_cost, cost_column):
     # Settings
     crs = network_lines.crs()
     epsg = crs.authid()
     otf = False
     default_value = 0
-    # Reading crs and epsg
+    network_fields = network_lines.pendingFields()
+    cost_index = network_fields.indexFromName(cost_column)
+    # Setting up graph build director
     director = QgsLineVectorLayerDirector(network_lines, -1, '', '', '', 3)
-    # Cost calculator
+    # Determining cost calculation
     if custom_cost == True:
-        properter = customProperter(custom_cost_column,default_value)
+        properter = customProperter(cost_index,default_value)
     else:
         properter = QgsDistanceArcProperter()
     # Building graph
     director.addProperter(properter)
     builder = QgsGraphBuilder(crs, otf, tolerance, epsg)
-    # Reading origins
+    # Reading origins and making list of coordinates
     origins = []
-    for f in origin_points.getFeatures():
+    origins_name ={}
+    for i,f in enumerate(origin_points.getFeatures()):
         geom = f.geometry().asPoint()
+        name = f[origin_column]
         origins.append(geom)
+        origins_name[i] = name
     # Connect origin points to the director and build graph
     tied_origins = director.makeGraph(builder, origins)
     graph = builder.graph()
 
-    return graph, tied_origins, origins
+    return graph, tied_origins, origins_name
 
 
 def alpha_shape(points, alpha):
@@ -113,9 +118,9 @@ def mca_network_writer(output_network, mca_network):
 
             cost_list = []
             for cost_dict in arc['arcCost']:
-                for origin in cost_dict:
+                for origin_index,origin in enumerate(cost_dict):
                     cost_list.append(cost_dict[origin])
-                    f.setAttribute(origin + 1, int(cost_dict[origin]))
+                    f.setAttribute(origin_index + 1, int(cost_dict[origin]))
 
                 if len(cost_list) > 0:
                     f.setAttribute('min_dist', int(min(cost_list)))
@@ -125,13 +130,16 @@ def mca_network_writer(output_network, mca_network):
         i += 1
 
 
-def mca_catchment_writer(output_catchment, mca_catchments, alpha):
-    for i in list(mca_catchments):
-        origin = i.keys()[0]
-        points = i[origin]
-
+def mca_catchment_writer(output_catchment, mca_catchments, origins_name, alpha):
+    for i,j in enumerate(mca_catchments):
+        origin = j.keys()[0]
+        points = j[origin]
+        name = origins_name.get(i)
         p = QgsFeature(output_catchment.pendingFields())
-        p.setAttribute("origin", "origin_%s" % (origin + 1))
+        if name:
+            p.setAttribute("origin", "%s" % name)
+        else:
+            p.setAttribute("origin", "origin_%s" % i)
         p_geom = QgsGeometry.fromWkt((alpha_shape(points, alpha)).wkt)
         p.setGeometry(p_geom)
         output_catchment.dataProvider().addFeatures([p])
@@ -144,13 +152,18 @@ def mca_vector_writer(layer, path, crs):
         crs,
         "ESRI Shapefile")
         
-def mca(graph, tied_origins, output_network, output_catchment, alpha, radius):
+def mca(graph,
+        tied_origins,
+        origins_name,
+        output_network,
+        output_catchment,
+        alpha,
+        radius):
+
     output_network.dataProvider().addAttributes([QgsField("id", QVariant.Int)])
     output_network.updateFields()
-
     # dictionary with id's, list of lines and their respective costs
     mca_network = []
-
     # list with dictionaries of polygon points
     mca_catchments = []
 
@@ -180,8 +193,11 @@ def mca(graph, tied_origins, output_network, output_catchment, alpha, radius):
         mca_catchment_points = {i: []}
 
         origin_vertex_id = graph.findVertex(tied_origins[i])
-
-        output_network.dataProvider().addAttributes([QgsField("origin_%s" % (i + 1), QVariant.Int)])
+        if origins_name.get(i):
+            origin_field_name = str(origins_name.get(i))
+        else: # No name in record
+            origin_field_name = "origin_%s" % (i + 1)
+        output_network.dataProvider().addAttributes([QgsField("%s" % (origin_field_name), QVariant.Int)])
         output_network.updateFields()
 
         (tree, cost) = QgsGraphAnalyzer.dijkstra(graph, origin_vertex_id, 0)
@@ -225,6 +241,7 @@ def mca(graph, tied_origins, output_network, output_catchment, alpha, radius):
 
                     # add edge lines
                     l = QgsFeature(output_network.pendingFields())
+
                     l.setAttribute(i + 1, int(cost[outVertexId]))
                     l.setGeometry(QgsGeometry.fromPolyline(
                         [graph.vertex(outVertexId).point(), QgsPoint(new_point_x, new_point_y)]))
@@ -242,7 +259,7 @@ def mca(graph, tied_origins, output_network, output_catchment, alpha, radius):
     # running writers
     mca_network_writer(output_network, mca_network)
 
-    mca_catchment_writer(output_catchment, mca_catchments, alpha)
+    mca_catchment_writer(output_catchment, mca_catchments, origins_name, alpha)
 
 
 def mca_network_renderer(output_network, radius):
