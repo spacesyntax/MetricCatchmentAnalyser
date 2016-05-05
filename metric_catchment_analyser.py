@@ -432,7 +432,7 @@ class MetricCatchmentAnalyser:
             output_catchment.dataProvider().addAttributes([QgsField("origin", QVariant.String)])
             output_catchment.updateFields()
             self.dlg.progress_mca.setValue(2)
-            # build graph
+            # build graph with custom cost
             if network_cost:
                 graph, tied_points, origins_name= self.mca_tools.graph_builder(
                     network,
@@ -441,6 +441,7 @@ class MetricCatchmentAnalyser:
                     network_tolerance,
                     True,
                     network_cost)
+            # build graph without custom cost
             else:
                 graph, tied_points, origins_name = self.mca_tools.graph_builder(
                     network,
@@ -450,15 +451,25 @@ class MetricCatchmentAnalyser:
                     False,
                     '')
             self.dlg.progress_mca.setValue(3)
-            # run analysis
-            self.mca_tools.mca(
-                graph,
-                tied_points,
-                origins_name,
-                output_network,
-                output_catchment,
-                polygon_tolerance,
-                radius)
+            # run analysis with origin name
+            if origins_name:
+                self.mca_tools.mca(
+                    graph,
+                    tied_points,
+                    origins_name,
+                    output_network,
+                    output_catchment,
+                    polygon_tolerance,
+                    radius)
+            else:
+                self.mca_tools.mca(
+                    graph,
+                    tied_points,
+                    '',
+                    output_network,
+                    output_catchment,
+                    polygon_tolerance,
+                    radius)
             self.dlg.progress_mca.setValue(4)
             # render network
             if self.dlg.check_network.isChecked() == True:
@@ -490,10 +501,11 @@ class MetricCatchmentAnalyser:
         network_list = []
         origins_list = []
         for layer in layers:
-            if (layer.wkbType() == 2 or layer.wkbType() == 5):
-                network_list.append(layer.name())
-            elif layer.wkbType() == 1:
-                origins_list.append(layer.name())
+            if layer.type() == 0:
+                if (layer.wkbType() == 2 or layer.wkbType() == 5):
+                    network_list.append(layer.name())
+                elif layer.wkbType() == 1:
+                    origins_list.append(layer.name())
         # adding layers to the comboboxes
         if not len(network_list) == 0:
             self.dlg.choose_network.addItems(network_list)

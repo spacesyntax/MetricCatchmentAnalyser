@@ -13,9 +13,9 @@ from arc_properter import customProperter
 
 # Loading shapely
 try:
-    from shapely.ops import cascaded_union, polygonize, triangulate
+    from shapely.ops import cascaded_union, polygonize
     from shapely.geometry import MultiPoint
-
+    from scipy.spatial import Delaunay
     ex_dep_loaded = True
 except ImportError,e:
     # Find path of external
@@ -26,8 +26,9 @@ except ImportError,e:
         sys.path.insert(0, cmd_folder)
     # Load shapely dependency again
     try:
-        from shapely.ops import cascaded_union, polygonize, triangulate
+        from shapely.ops import cascaded_union, polygonize
         from shapely.geometry import MultiPoint
+        from scipy.spatial import Delaunay
     except ImportError,e:
         ex_dep_loaded = False
 
@@ -54,9 +55,11 @@ def graph_builder(network_lines, origin_points, origin_column, tolerance,custom_
     origins_name ={}
     for i,f in enumerate(origin_points.getFeatures()):
         geom = f.geometry().asPoint()
-        name = f[origin_column]
         origins.append(geom)
-        origins_name[i] = name
+        if origins_name:
+            print origins_name
+            f[origin_column]
+            origins_name[i] = name
     # Connect origin points to the director and build graph
     tied_origins = director.makeGraph(builder, origins)
     graph = builder.graph()
@@ -70,12 +73,12 @@ def alpha_shape(points, alpha):
     # Transform points into Shapely's MultiPoint format
     multi_points = MultiPoint(points)
     # Create delaunay triangulation
-    triangles = triangulate(multi_points)
+    triangles = Delaunay(multi_points)
     # Assess triangles
-    for i in triangles:
-        coord_a = list(i.exterior.coords)[1]
-        coord_b = list(i.exterior.coords)[2]
-        coord_c = list(i.exterior.coords)[3]
+    for a, b, c in triangles.vertices:
+        coord_a = points[a]
+        coord_b = points[b]
+        coord_c = points[c]
 
         # Calculating length of triangle sides
         a = math.sqrt((coord_a[0] - coord_b[0]) ** 2 + (coord_a[1] - coord_b[1]) ** 2)
@@ -193,7 +196,7 @@ def mca(graph,
         mca_catchment_points = {i: []}
 
         origin_vertex_id = graph.findVertex(tied_origins[i])
-        if origins_name.get(i):
+        if origins_name:
             origin_field_name = str(origins_name.get(i))
         else: # No name in record
             origin_field_name = "origin_%s" % (i + 1)
