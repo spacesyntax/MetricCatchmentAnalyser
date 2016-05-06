@@ -11,26 +11,14 @@ import inspect
 # Custom cost builder
 from arc_properter import customProperter
 
-# Loading shapely
+# Loading shapely and SciPy
 try:
     from shapely.ops import cascaded_union, polygonize
     from shapely.geometry import MultiPoint
     from scipy.spatial import Delaunay
     ex_dep_loaded = True
 except ImportError,e:
-    # Find path of external
-    cmd_folder = \
-        os.path.realpath(os.path.abspath(os.path.join(os.path.split(inspect.getfile(inspect.currentframe()))[0],"external")))
-    # If path not in system path add it
-    if cmd_folder not in sys.path:
-        sys.path.insert(0, cmd_folder)
-    # Load shapely dependency again
-    try:
-        from shapely.ops import cascaded_union, polygonize
-        from shapely.geometry import MultiPoint
-        from scipy.spatial import Delaunay
-    except ImportError,e:
-        ex_dep_loaded = False
+    	ex_dep_loaded = False
 
 def graph_builder(network_lines, origin_points, origin_column, tolerance,custom_cost, cost_column):
     # Settings
@@ -58,7 +46,7 @@ def graph_builder(network_lines, origin_points, origin_column, tolerance,custom_
         origins.append(geom)
         if origins_name:
             print origins_name
-            f[origin_column]
+            #f[origin_column]
             origins_name[i] = name
     # Connect origin points to the director and build graph
     tied_origins = director.makeGraph(builder, origins)
@@ -137,10 +125,9 @@ def mca_catchment_writer(output_catchment, mca_catchments, origins_name, alpha):
     for i,j in enumerate(mca_catchments):
         origin = j.keys()[0]
         points = j[origin]
-        name = origins_name.get(i)
         p = QgsFeature(output_catchment.pendingFields())
-        if name:
-            p.setAttribute("origin", "%s" % name)
+        if origins_name:
+            p.setAttribute("origin", "%s" % origins_name.get(i))
         else:
             p.setAttribute("origin", "origin_%s" % i)
         p_geom = QgsGeometry.fromWkt((alpha_shape(points, alpha)).wkt)
