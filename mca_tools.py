@@ -73,14 +73,17 @@ def alpha_shape(points, alpha):
         b = math.sqrt((coord_a[0] - coord_c[0]) ** 2 + (coord_a[1] - coord_c[1]) ** 2)
         c = math.sqrt((coord_c[0] - coord_b[0]) ** 2 + (coord_c[1] - coord_b[1]) ** 2)
 
-        # Calculating circumcircle radius
-        circum_rad = (a * b * c) / math.sqrt((a + b + c) * (b + c - a) * (c + a - b) * (a + b - c))
-
-        # Circumcircle radius filter
-        if circum_rad < alpha:
-            pl_lines.append((coord_a, coord_b))
-            pl_lines.append((coord_a, coord_c))
-            pl_lines.append((coord_c, coord_b))
+        # Test triangle area
+		if ((a + b + c) * (b + c - a) * (c + a - b) * (a + b - c)) <=0:
+			pass
+		else :	
+			# Calculating circumcircle radius
+			circum_rad = (a * b * c) / math.sqrt((a + b + c) * (b + c - a) * (c + a - b) * (a + b - c))
+			# Circumcircle radius filter
+			if circum_rad < alpha:
+				pl_lines.append((coord_a, coord_b))
+				pl_lines.append((coord_a, coord_c))
+				pl_lines.append((coord_c, coord_b))
 
     # Circumcircle radius filter
     pl_triangles = list(polygonize(pl_lines))
