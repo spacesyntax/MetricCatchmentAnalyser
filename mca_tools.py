@@ -13,10 +13,17 @@ from arc_properter import customProperter
 
 # Loading shapely and SciPy
 try:
+<<<<<<< Updated upstream
 	from shapely.ops import cascaded_union, polygonize
 	from shapely.geometry import MultiPoint
 	from scipy.spatial import Delaunay
 	ex_dep_loaded = True
+=======
+    from shapely.ops import cascaded_union, polygonize
+    from shapely.geometry import MultiPoint, MultiLineString
+    from scipy.spatial import Delaunay
+    ex_dep_loaded = True
+>>>>>>> Stashed changes
 except ImportError,e:
 		ex_dep_loaded = False
 
@@ -54,6 +61,7 @@ def graph_builder(network_lines, origin_points, origins_column, tolerance,custom
 
 
 def alpha_shape(points, alpha):
+<<<<<<< Updated upstream
 	# Empty triangle list
 	pl_lines = []
 	# Transform points into Shapely's MultiPoint format
@@ -88,6 +96,47 @@ def alpha_shape(points, alpha):
 	pl_polygon = cascaded_union(pl_triangles)
 
 	return pl_polygon
+=======
+    # Empty triangle list
+    pl_lines = []
+    # Transform points into Shapely's MultiPoint format
+    multi_points = MultiPoint(points)
+    # Create delaunay triangulation
+    triangles = Delaunay(multi_points)
+    # Assess triangles
+    for a, b, c in triangles.vertices:
+        coord_a = points[a]
+        coord_b = points[b]
+        coord_c = points[c]
+
+        # Calculating length of triangle sides
+        a = math.sqrt((coord_a[0] - coord_b[0]) ** 2.0 + (coord_a[1] - coord_b[1]) ** 2.0)
+        b = math.sqrt((coord_a[0] - coord_c[0]) ** 2.0 + (coord_a[1] - coord_c[1]) ** 2.0)
+        c = math.sqrt((coord_c[0] - coord_b[0]) ** 2.0 + (coord_c[1] - coord_b[1]) ** 2.0)
+
+        # Semi-perimeter of the triangle
+        s = (a + b + c)/2.0
+
+        # Area of
+        tri_area = math.sqrt(s * (s-a) * (s-b)) * (s-c)
+        # Calculating circumcircle radius and area
+        circum_rad = a * b * c / (4.0 * tri_area)
+        circum_area = 3.14159 * circum_rad
+
+        #(a * b * c) / math.sqrt((a + b + c) * (b + c - a) * (c + a - b) * (a + b - c))
+        #print circum_rad
+        # Circumcircle radius filter
+        if circum_area < tri_area * 5:
+            pl_lines.append((coord_a, coord_b))
+            pl_lines.append((coord_a, coord_c))
+            pl_lines.append((coord_c, coord_b))
+
+    # Writing the polygon
+    pl_triangles = list(polygonize(pl_lines))
+    pl_polygon = cascaded_union(pl_triangles)
+
+    return pl_polygon
+>>>>>>> Stashed changes
 
 
 def mca_network_writer(output_network, mca_network):
@@ -144,6 +193,7 @@ def mca_vector_writer(layer, path, crs):
 		"ESRI Shapefile")
 		
 def mca(graph,
+<<<<<<< Updated upstream
 		tied_origins,
 		origins_name,
 		output_network,
@@ -256,6 +306,115 @@ def mca(graph,
 	mca_network_writer(output_network, mca_network)
 
 	mca_catchment_writer(output_catchment, mca_catchments, origins_name, alpha)
+=======
+        tied_origins,
+        origins_name,
+        output_network,
+        output_catchment,
+        alpha,
+        radius):
+
+    output_network.dataProvider().addAttributes([QgsField("id", QVariant.Int)])
+    output_network.updateFields()
+    # dictionary with id's, list of lines and their respective costs
+    mca_network = []
+    # list with dictionaries of polygon points
+    mca_catchments = []
+
+    n = 0
+
+    while n < graph.arcCount():
+        arc_prop = {'arcId': 0, 'arcGeom': [], 'arcCost': [],}
+
+        arc_prop['arcId'] = n;
+
+        inVertexId = graph.arc(n).inVertex()
+        outVertexId = graph.arc(n).outVertex()
+
+        inVertexGeom = graph.vertex(inVertexId).point()
+        outVertexGeom = graph.vertex(outVertexId).point()
+
+        arc_prop['arcGeom'] = [inVertexGeom, outVertexGeom];
+        mca_network.append(arc_prop)
+
+        n += 1
+
+    # iteration through all tied origin points
+    i = 0
+
+    for o in tied_origins:
+
+        mca_catchment_points = {i: []}
+
+        origin_vertex_id = graph.findVertex(tied_origins[i])
+        if origins_name:
+            origin_field_name = str(origins_name.get(i))
+        else: # No name in record
+            origin_field_name = "origin_%s" % (i + 1)
+        output_network.dataProvider().addAttributes([QgsField("%s" % (origin_field_name), QVariant.Int)])
+        output_network.updateFields()
+
+        (tree, cost) = QgsGraphAnalyzer.dijkstra(graph, origin_vertex_id, 0)
+
+        # Analysing the costs of the tree
+        x = 0
+
+        while x < graph.arcCount():
+            inVertexId = graph.arc(x).inVertex()
+
+            # origin lines
+            if inVertexId == origin_vertex_id:
+                arcCost = {i: 0}
+                mca_network[x]['arcCost'].append(arcCost)
+
+                # lines within the radius
+            if cost[inVertexId] < radius and tree[inVertexId] != -1:  # lines within the radius
+                outVertexId = graph.arc(x).outVertex()
+                if cost[outVertexId] < radius:
+                    arc_cost = cost[outVertexId]
+                    arcCost = {i: arc_cost}
+                    mca_network[x]['arcCost'].append(arcCost)
+
+                    # mca_catchment_points[i].append(graph.vertex(inVertexId).point())
+
+            # lines at the edge of the radius
+            elif cost[inVertexId] > radius and tree[inVertexId] != -1:
+                outVertexId = graph.arc(x).outVertex()
+
+                if cost[outVertexId] < radius:
+                    # constructing cut down edge lines
+                    edge_line_length = radius - cost[outVertexId]
+                    edge_line_azimuth = graph.vertex(outVertexId).point().azimuth(
+                        graph.vertex(inVertexId).point())  # degrees from north
+
+                    new_point_adjacent = math.sin(math.radians(edge_line_azimuth)) * edge_line_length
+                    new_point_opposite = math.cos(math.radians(edge_line_azimuth)) * edge_line_length
+
+                    new_point_x = graph.vertex(outVertexId).point()[0] + new_point_adjacent
+                    new_point_y = graph.vertex(outVertexId).point()[1] + new_point_opposite
+
+                    # add edge lines
+                    l = QgsFeature(output_network.pendingFields())
+
+                    l.setAttribute(i + 1, int(cost[outVertexId]))
+                    l.setGeometry(QgsGeometry.fromPolyline(
+                        [graph.vertex(outVertexId).point(), QgsPoint(new_point_x, new_point_y)]))
+                    output_network.dataProvider().addFeatures([l])
+
+                    # add edge points
+                    mca_catchment_points[i].append((new_point_x, new_point_y))
+
+            x += 1
+
+        mca_catchments.append(mca_catchment_points)
+
+        i += 1
+
+    # running writers
+    mca_network_writer(output_network, mca_network)
+
+    mca_catchment_writer(output_catchment, mca_catchments, origins_name, alpha)
+>>>>>>> Stashed changes
 
 
 def mca_network_renderer(output_network, radius):

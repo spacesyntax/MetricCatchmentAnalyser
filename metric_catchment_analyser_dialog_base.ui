@@ -219,22 +219,6 @@
        </property>
       </widget>
      </item>
-     <item row="18" column="0">
-      <widget class="QSpinBox" name="polygon_tolerance">
-       <property name="suffix">
-        <string>m</string>
-       </property>
-       <property name="maximum">
-        <number>999999</number>
-       </property>
-       <property name="singleStep">
-        <number>100</number>
-       </property>
-       <property name="value">
-        <number>300</number>
-       </property>
-      </widget>
-     </item>
      <item row="15" column="0">
       <widget class="QSpinBox" name="radius">
        <property name="suffix">
@@ -300,6 +284,16 @@
       <widget class="QLineEdit" name="cost_column">
        <property name="enabled">
         <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="18" column="0">
+      <widget class="QDoubleSpinBox" name="polygon_tolerance">
+       <property name="maximum">
+        <double>10000.000000000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
        </property>
       </widget>
      </item>
